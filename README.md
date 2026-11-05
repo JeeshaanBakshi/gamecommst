@@ -133,3 +133,4 @@ src/
     sound.ts           Web Audio sound effects
 supabase/schema.sql    database schema, policies, realtime
 ```
+# game-
