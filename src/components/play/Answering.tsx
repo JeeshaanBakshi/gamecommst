@@ -15,11 +15,28 @@ export const buzz = () => {
 };
 
 /** Scantron-style options: tap fills the bubble. */
-export function ChoiceList({ q, value, locked, onPick, compact }: { q: QuestionDef; value?: number; locked: boolean; onPick: (i: number) => void; compact?: boolean }) {
+export function ChoiceList({
+  q,
+  value,
+  locked,
+  onPick,
+  compact,
+  correct,
+}: {
+  q: QuestionDef;
+  value?: number;
+  locked: boolean;
+  onPick: (i: number) => void;
+  compact?: boolean;
+  /** Quiz reveal: mark the right answer green and a wrong pick red. */
+  correct?: number;
+}) {
   return (
     <div className={cx("flex flex-col", compact ? "gap-2" : "gap-3")}>
       {q.options.map((o, i) => {
         const on = value === i;
+        const right = correct != null && i === correct;
+        const wrong = correct != null && on && !right;
         return (
           <motion.button
             key={o.label}
@@ -31,9 +48,11 @@ export function ChoiceList({ q, value, locked, onPick, compact }: { q: QuestionD
               onPick(i);
             }}
             className={cx(
-              "flex items-center gap-4 rounded-2xl border-[3px] border-ink px-4 text-left font-extrabold disabled:opacity-60",
+              "flex items-center gap-4 rounded-2xl border-[3px] border-ink px-4 text-left font-extrabold",
+              correct == null && "disabled:opacity-60",
               compact ? "py-2.5 text-xl" : "py-4 text-2xl",
-              on ? "bg-ink text-gold shadow-none" : "bg-paper shadow-hard",
+              right ? "bg-mint text-paper shadow-none" : wrong ? "bg-pen text-paper shadow-none" : on ? "bg-ink text-gold shadow-none" : "bg-paper shadow-hard",
+              correct != null && !right && !wrong && "opacity-50",
             )}
             aria-pressed={on}
           >
@@ -44,7 +63,7 @@ export function ChoiceList({ q, value, locked, onPick, compact }: { q: QuestionD
                 on ? "border-gold bg-gold text-ink" : "border-ink",
               )}
             >
-              {on ? "●" : LETTERS[i]}
+              {right ? "✓" : wrong ? "✗" : on ? "●" : LETTERS[i]}
             </span>
             <span className="flex-1">{o.label}</span>
             <span className={compact ? "text-2xl" : "text-3xl"}>{o.emoji}</span>

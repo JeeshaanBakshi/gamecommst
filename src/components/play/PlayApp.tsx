@@ -3,15 +3,17 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback } from "react";
 import { usePlayerGame } from "@/hooks/usePlayerGame";
+import { serverNow } from "@/lib/clock";
 import { SCREENS, type Screen } from "@/lib/flow";
 import type { AnswerValue, QuestionKey } from "@/lib/types";
-import { DISCLAIMER } from "../ui";
 import { ChoiceList, ChoiceQuestion, SliderQuestion, Status } from "./Answering";
 import { EnterCode, JoinForm } from "./JoinScreens";
 import { MathTask } from "./MathTask";
 import { PulseTask } from "./PulseTask";
+import { QuizQuestion } from "./QuizQuestion";
 import { ResultCard } from "./ResultCard";
 import { Prompt, Shell } from "./Shell";
+import { SpeakerScreen } from "./SpeakerScreen";
 import { Waiting } from "./Waiting";
 
 export function PlayApp() {
@@ -50,10 +52,23 @@ export function PlayApp() {
     switch (s.type) {
       case "lobby":
         return <Waiting emoji={player!.emoji} title="You're in!" sub="Find your face on the big screen" />;
-      case "section":
-        return <Waiting emoji={player!.emoji} title={s.variant === "alert" ? "🚨 Stress test incoming" : "Eyes up front!"} sub={s.title} />;
+      case "talk":
+        return <SpeakerScreen s={s} emoji={player!.emoji} />;
       case "question": {
         const v = mine[s.q.key]?.v;
+        if (s.q.correct != null) {
+          return (
+            <QuizQuestion
+              key={`${s.id}-${state!.started_at}`}
+              q={s.q}
+              value={v}
+              locked={locked}
+              revealed={revealed}
+              startedAt={state!.started_at}
+              onPick={(i) => save(s.q.key, { v: i, t: serverNow() })}
+            />
+          );
+        }
         return s.q.kind === "slider" ? (
           <SliderQuestion key={s.id} q={s.q} value={v} locked={locked} revealed={revealed} onSubmit={(i) => save(s.q.key, { v: i })} />
         ) : (
@@ -91,15 +106,6 @@ export function PlayApp() {
       }
       case "finale":
         return <ResultCard backend={backend} roomId={room!.id} player={player!} startedAt={state!.started_at} />;
-      case "end":
-        return (
-          <div className="flex flex-1 flex-col justify-center text-center">
-            <div className="text-7xl">🪿</div>
-            <h1 className="mt-4 text-4xl font-extrabold">Thanks for playing!</h1>
-            <p className="mt-3 text-lg font-bold">Sleep 7+ hours. Eat real meals. Touch grass. Your hairline will thank you.</p>
-            <p className="mt-6 font-mono text-xs font-bold opacity-70">{DISCLAIMER}</p>
-          </div>
-        );
     }
   }
 

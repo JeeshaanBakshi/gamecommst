@@ -1,10 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getBackend } from "@/lib/backend";
 import { serverNow, syncClock } from "@/lib/clock";
 import { fakePlayers } from "@/lib/demo";
-import { isRevealable, MATH_DURATION_MS, SCREENS } from "@/lib/flow";
+import { isQuiz, isRevealable, MATH_DURATION_MS, SCREENS } from "@/lib/flow";
 import { indexAnswers, type Answer, type AnswerIndex, type ConnStatus, type GameState, type Player, type Room } from "@/lib/types";
 import { roomCode } from "@/lib/uid";
 
@@ -124,7 +124,9 @@ export function useHostGame(events: Events = {}) {
     (i: number) => {
       const screen = Math.max(0, Math.min(SCREENS.length - 1, i));
       if (screen === stateRef.current?.screen) return;
-      write({ screen, revealed: false, locked: false, started_at: null });
+      // Quizzes start their countdown the moment they appear.
+      const started_at = isQuiz(SCREENS[screen]) ? new Date(serverNow()).toISOString() : null;
+      write({ screen, revealed: false, locked: false, started_at });
     },
     [write],
   );
@@ -203,6 +205,11 @@ export function useHostGame(events: Events = {}) {
     setPlayers((prev) => [...prev, ...created.filter((c) => !prev.some((p) => p.id === c.id))]);
   }, [backend, room]);
 
+  const actions = useMemo(
+    () => ({ next, prev, goTo, reveal, toggleLock, reset, newRoom, kick, seedFakes }),
+    [next, prev, goTo, reveal, toggleLock, reset, newRoom, kick, seedFakes],
+  );
+
   return {
     backend,
     room,
@@ -211,7 +218,7 @@ export function useHostGame(events: Events = {}) {
     answers,
     status,
     error,
-    actions: { next, prev, goTo, reveal, toggleLock, reset, newRoom, kick, seedFakes },
+    actions,
   };
 }
 

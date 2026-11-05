@@ -7,7 +7,11 @@ export type QuestionKey =
   | "pulse_before"
   | "pulse_after"
   | "math"
-  | "family";
+  | "family"
+  | "quiz_shed"
+  | "quiz_sleep"
+  | "quiz_iron"
+  | "quiz_genetics";
 
 export interface Room {
   id: string;
@@ -57,6 +61,8 @@ export interface AnswerValue {
   correct?: number;
   ms?: number;
   done?: boolean;
+  /** Server-clock ms when a quiz answer was submitted (for "fastest correct"). */
+  t?: number;
 }
 
 export interface Answer {

@@ -144,6 +144,19 @@ export function tierFor(score: number): Tier {
   return TIERS[3];
 }
 
+/* ---------- quizzes ---------- */
+
+export function quizStats(players: Player[], idx: AnswerIndex, key: QuestionKey, correct: number, startedAt: string | null) {
+  const a = idx[key] ?? {};
+  const start = startedAt ? Date.parse(startedAt) : 0;
+  const answered = Object.values(a).filter((v) => typeof v.v === "number").length;
+  const right = players
+    .filter((p) => a[p.id]?.v === correct)
+    .map((p) => ({ player: p, ms: Math.max(0, (a[p.id].t ?? Infinity) - start) }))
+    .sort((x, y) => x.ms - y.ms);
+  return { answered, right: right.length, pctRight: pct(right.length, answered), fastest: right.slice(0, 3) };
+}
+
 /* ---------- stress test ---------- */
 
 export function pulseStats(idx: AnswerIndex) {

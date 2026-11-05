@@ -5,20 +5,20 @@ import { useEffect, useRef, useState } from "react";
 import { useDemoBots } from "@/hooks/useDemoBots";
 import { useHostGame } from "@/hooks/useHostGame";
 import { burst } from "@/lib/confetti";
-import { SCREENS, type Screen } from "@/lib/flow";
+import { serverNow } from "@/lib/clock";
+import { isQuiz, QUIZ_MS, SCREENS, type Screen } from "@/lib/flow";
 import { sfx } from "@/lib/sound";
 import { HostControls } from "./HostControls";
 import { Stage } from "./Stage";
 import { TopBar } from "./TopBar";
-import { EndScreen } from "./screens/EndScreen";
 import { FinaleScreen } from "./screens/FinaleScreen";
 import { LobbyScreen } from "./screens/LobbyScreen";
 import { MathScreen } from "./screens/MathScreen";
 import { PulseScreen } from "./screens/PulseScreen";
 import { QuestionScreen } from "./screens/QuestionScreen";
-import { SectionScreen } from "./screens/SectionScreen";
 import { StressResultsScreen } from "./screens/StressResultsScreen";
 import { StudyScrollScreen } from "./screens/StudyScrollScreen";
+import { TalkScreen } from "./screens/TalkScreen";
 
 export function HostApp() {
   const game = useHostGame({ onJoin: () => sfx.join(), onAnswer: () => sfx.pop() });
@@ -91,13 +91,30 @@ export function HostApp() {
     prevRevealed.current = revealed;
   }, [revealed]);
 
+  /* quizzes reveal themselves when the clock runs out or everyone has answered */
+  const current = state ? SCREENS[state.screen] : null;
+  const quizKey = current && isQuiz(current) ? current.q.key : null;
+  const quizAnswered = quizKey ? Object.keys(answers[quizKey] ?? {}).length : 0;
+  const startedAt = state?.started_at ?? null;
+  const autoRevealed = useRef<string | null>(null);
+  useEffect(() => {
+    if (!quizKey || revealed || !startedAt || autoRevealed.current === startedAt) return;
+    const everyone = players.length > 0 && quizAnswered >= players.length;
+    const wait = everyone ? 700 : Math.max(0, Date.parse(startedAt) + QUIZ_MS - serverNow());
+    const t = setTimeout(() => {
+      autoRevealed.current = startedAt;
+      actions.reveal();
+    }, wait);
+    return () => clearTimeout(t);
+  }, [quizKey, revealed, startedAt, quizAnswered, players.length, actions]);
+
   if (error && !room) return <Fullscreen msg={`Couldn't start the room: ${error}`} />;
   if (!room || !state) return <Fullscreen msg="Setting up the room…" />;
 
   const screen = SCREENS[state.screen] ?? SCREENS[0];
   const base = (process.env.NEXT_PUBLIC_SITE_URL || window.location.origin).replace(/\/$/, "");
   const joinUrl = `${base}/play?room=${room.code}`;
-  const dark = screen.type === "section" && screen.variant === "alert";
+  const dark = screen.type === "talk" && !!screen.alert;
 
   return (
     <>
@@ -143,10 +160,10 @@ export function HostApp() {
     switch (s.type) {
       case "lobby":
         return <LobbyScreen code={room!.code} joinUrl={joinUrl} players={players} onKick={(id) => void actions.kick(id)} localMode={backend.mode === "local"} />;
-      case "section":
-        return <SectionScreen screen={s} />;
+      case "talk":
+        return <TalkScreen s={s} />;
       case "question":
-        return <QuestionScreen q={s.q} {...common} revealed={state!.revealed} locked={state!.locked} />;
+        return <QuestionScreen q={s.q} answers={answers} players={players} revealed={state!.revealed} locked={state!.locked} startedAt={state!.started_at} />;
       case "double":
         return <StudyScrollScreen {...common} revealed={state!.revealed} locked={state!.locked} />;
       case "pulse":
@@ -157,8 +174,6 @@ export function HostApp() {
         return <StressResultsScreen players={players} answers={answers} />;
       case "finale":
         return <FinaleScreen startedAt={state!.started_at} players={players} answers={answers} />;
-      case "end":
-        return <EndScreen />;
     }
   }
 }

@@ -14,7 +14,7 @@ interface Props {
 }
 
 export function TopBar({ screen, code, playerCount, status, dark }: Props) {
-  const label = screen.type === "section" ? null : screen.section;
+  const label = screen.section;
   return (
     <div className={`absolute inset-x-0 top-0 z-20 flex h-[100px] items-center justify-between px-14 ${dark ? "text-gold" : "text-ink"}`}>
       <div className="flex items-center gap-4">

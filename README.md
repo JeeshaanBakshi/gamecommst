@@ -62,7 +62,7 @@ The host remembers its room, so refreshing `/host` keeps the same code and playe
 
 | Key | Action |
 |-----|--------|
-| `→` / `Space` / `PageDown` | Next. On a question it **reveals** results first; on the math round it **starts the 30s timer**; on the finale it **starts the reveal**. |
+| `→` / `Space` / `PageDown` | Next. On a poll or quiz it **reveals** results first; on the math round it **starts the 30s timer**; on the finale it **starts the reveal**. |
 | `←` / `PageUp` | Previous screen |
 | `R` | Reveal results (also locks answers) |
 | `L` | Lock / unlock answers |
@@ -75,16 +75,22 @@ Presentation clickers send PageUp/PageDown, so they work out of the box. Move th
 
 > **Sound:** browsers block audio until you interact with the page, so click anywhere or press a key on `/host` once before starting.
 
-### Game flow (about 8 minutes)
+### Game flow
 
-1. **The Waterloo Effect** (Gurshaan): stress slider 1–5 → distribution + average-based roast
-2. **Sleep deprivation** (Austin): hours of sleep → "% sleeping < 6h"
-3. **Eating habits**: meals skipped per week → "% skipping 4+"
-4. **Managing courseload** (Jeeshaan): study vs doomscroll hours → side-by-side chart, "SCROLLING WINS" stamp if it does
-   - **Stress test:** pulse #1 (15s phone timer, count × 4) → 30s mental math (5 questions, live race board, countdown turns red and shakes for the last 10s) → pulse #2 → before vs after BPM, % whose heart rate rose, speed leaderboard
-5. **How not to go bald**: family history → **Closest to Bald** finale (drumroll, countdown reveal from #8 to #1, receding cartoon hairlines, then each phone shows its own result card) → tips slide
+Every section works the same way: **the speaker's slides → a poll → a quiz.** The slides are part of the game, so while someone is talking every phone shows *"👀 Look up! Jeeshaan is speaking about managing courseload. Pay attention if you don't wanna go bald."*
 
-Presenter names and section notes are in [`src/lib/flow.ts`](src/lib/flow.ts) (`PRESENTERS`, `SCREENS`). Sections 3 and 5 have no name set yet.
+| # | Speaker | Slides | Then the audience plays |
+|---|---------|--------|-------------------------|
+| 1 | Gurshaan | What is the Waterloo Effect? · Why stress hits your hair | Stress slider 1–5 → quiz: when does stress shedding start? |
+| 2 | Austin | Sleep deprivation · The all-nighter math | Hours of sleep → quiz: how much sleep do adults need? |
+| 3 | Jacob | Eating habits · Hair-friendly fuel | Meals skipped → quiz: classic cause of shedding? |
+| 4 | Jeeshaan | Managing courseload · STRESS TEST | Study vs doomscroll → pulse #1 → 30s mental math → pulse #2 → before/after BPM + speed leaderboard |
+| 5 | Gurshaan | How not to go bald · The prescription | Family history → quiz: #1 cause of permanent hair loss? → **Closest to Bald** finale |
+
+- **Polls** (feed the bald score) stay open until you press → to reveal.
+- **Quizzes** get a 15-second countdown, one answer per person, and reveal themselves when time runs out or everyone has answered. The big screen hides the vote counts until then, so nobody copies the crowd. The reveal shows the right answer, % correct and the 3 fastest correct players; each phone shows ✅ or ❌.
+
+**Editing slides:** every speaker's slides live in [`src/lib/slides.ts`](src/lib/slides.ts). Change the text, or add a third slide by adding another `{ title, emoji, bullets }` to that speaker's `slides` list. Polls and quizzes are in [`src/lib/flow.ts`](src/lib/flow.ts) (`Q` and `SCREENS`).
 
 ### Bald score
 

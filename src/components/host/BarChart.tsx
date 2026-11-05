@@ -15,18 +15,25 @@ interface Props {
   total: number;
   revealed: boolean;
   height?: number;
+  /** Colour for highlighted bars once revealed: red pen (bad) or green (correct). */
+  highlightTone?: "pen" | "mint";
+  /** Fade the non-highlighted bars on reveal (quiz answers). */
+  dimOthers?: boolean;
 }
 
 /** Live vote bars: grow with a springy bounce as each vote lands. */
-export function BarChart({ bars, total, revealed, height = 560 }: Props) {
+export function BarChart({ bars, total, revealed, height = 560, highlightTone = "pen", dimOthers = false }: Props) {
   const max = Math.max(1, ...bars.map((b) => b.count));
   return (
     <div className="flex h-full items-end justify-around gap-8 px-10">
       {bars.map((b, i) => {
         const pct = total ? Math.round((b.count / total) * 100) : 0;
         const red = revealed && b.highlight;
+        const dim = revealed && dimOthers && !b.highlight;
+        const hi = highlightTone === "mint" ? "bg-mint" : "bg-pen";
+        const hiText = highlightTone === "mint" ? "text-mint" : "text-pen";
         return (
-          <div key={b.label} className="flex flex-1 flex-col items-center">
+          <div key={b.label} className={cx("flex flex-1 flex-col items-center transition-opacity duration-500", dim && "opacity-35")}>
             <div className="relative flex w-full flex-col items-center justify-end" style={{ height }}>
               <div className="mb-2 flex items-baseline gap-2">
                 <AnimatePresence mode="popLayout">
@@ -44,7 +51,7 @@ export function BarChart({ bars, total, revealed, height = 560 }: Props) {
               <motion.div
                 className={cx(
                   "relative w-full max-w-[220px] rounded-t-2xl border-4 border-b-0 border-ink",
-                  red ? "bg-pen" : "bg-ink",
+                  red ? hi : "bg-ink",
                 )}
                 initial={{ height: 8 }}
                 animate={{ height: Math.max(8, (b.count / max) * (height - 90)) }}
@@ -55,7 +62,10 @@ export function BarChart({ bars, total, revealed, height = 560 }: Props) {
             </div>
             <div className="w-full max-w-[260px] border-t-4 border-ink pt-3 text-center">
               <div className="text-6xl leading-none">{b.emoji}</div>
-              <div className={cx("mt-2 text-3xl font-extrabold", red && "text-pen")}>{b.label}</div>
+              <div className={cx("mt-2 text-3xl font-extrabold", red && hiText)}>
+                {red && highlightTone === "mint" && "✓ "}
+                {b.label}
+              </div>
             </div>
           </div>
         );

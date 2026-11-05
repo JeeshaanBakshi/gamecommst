@@ -1,5 +1,5 @@
 import { mathQuestions } from "./mathRound";
-import { MATH_DURATION_MS } from "./flow";
+import { MATH_DURATION_MS, Q, type QuestionDef } from "./flow";
 import type { AnswerValue, NewPlayer, QuestionKey } from "./types";
 import { AVATARS } from "./avatars";
 
@@ -50,7 +50,13 @@ const WEIGHTS: Partial<Record<QuestionKey, number[]>> = {
   family: [3, 4, 3],
 };
 
-export function botChoice(key: QuestionKey): AnswerValue {
+export function botChoice(key: QuestionKey, t?: number): AnswerValue {
+  const quiz = (Object.values(Q) as QuestionDef[]).find((q) => q.key === key && q.correct != null);
+  if (quiz) {
+    // ~60% get it right; the rest spread across the wrong answers.
+    const w = quiz.options.map((_, i) => (i === quiz.correct ? 6 : 4 / (quiz.options.length - 1)));
+    return { v: weighted(w), t };
+  }
   return { v: weighted(WEIGHTS[key] ?? [1, 1, 1, 1]) };
 }
 
