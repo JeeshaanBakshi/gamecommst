@@ -8,6 +8,8 @@ export interface Bar {
   emoji: string;
   count: number;
   highlight?: boolean;
+  /** Optional fixed bar colour (e.g. a green → red scale); highlighted bars keep it. */
+  color?: string;
 }
 
 interface Props {
@@ -51,8 +53,9 @@ export function BarChart({ bars, total, revealed, height = 560, highlightTone = 
               <motion.div
                 className={cx(
                   "relative w-full max-w-[220px] rounded-t-2xl border-4 border-b-0 border-ink",
-                  red ? hi : "bg-ink",
+                  b.color ? "" : red ? hi : "bg-ink",
                 )}
+                style={b.color ? { backgroundColor: b.color } : undefined}
                 initial={{ height: 8 }}
                 animate={{ height: Math.max(8, (b.count / max) * (height - 90)) }}
                 transition={{ type: "spring", stiffness: 140, damping: 14, delay: i * 0.03 }}
@@ -62,7 +65,7 @@ export function BarChart({ bars, total, revealed, height = 560, highlightTone = 
             </div>
             <div className="w-full max-w-[260px] border-t-4 border-ink pt-3 text-center">
               <div className="text-6xl leading-none">{b.emoji}</div>
-              <div className={cx("mt-2 text-3xl font-extrabold", red && hiText)}>
+              <div className={cx("mt-2 text-3xl font-extrabold", red && !b.color && hiText)} style={red && b.color ? { color: b.color } : undefined}>
                 {red && highlightTone === "mint" && "✓ "}
                 {b.label}
               </div>

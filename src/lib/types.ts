@@ -9,7 +9,8 @@ export type QuestionKey =
   | "quiz_sleep"
   | "quiz_caffeine"
   | "quiz_genetics"
-  | "focus";
+  | "focus"
+  | "deadline";
 
 export interface Room {
   id: string;

@@ -46,6 +46,8 @@ export function QuestionScreen({ q, answers, players, revealed, locked, startedA
   const quiz = q.correct != null;
   const counts = countOptions(answers, q.key, q.options.length);
   const total = counts.reduce((a, b) => a + b, 0);
+  const top = Math.max(...counts);
+  const step = q.stepPoll;
   const meterTotal = Math.max(players.length, total);
 
   return (
@@ -65,12 +67,13 @@ export function QuestionScreen({ q, answers, players, revealed, locked, startedA
               revealed={revealed}
               height={quiz ? 540 : 560}
               highlightTone={quiz ? "mint" : "pen"}
-              dimOthers={quiz}
+              dimOthers={quiz || !!step}
               bars={q.options.map((o, i) => ({
-                label: q.kind === "slider" ? `${i + 1} · ${o.label}` : o.label,
+                label: step ? (o.short ?? o.label) : q.kind === "slider" ? `${i + 1} · ${o.label}` : o.label,
                 emoji: o.emoji,
                 count: counts[i],
-                highlight: quiz ? i === q.correct : q.bad.includes(i),
+                highlight: quiz ? i === q.correct : step ? total > 0 && counts[i] === top : q.bad.includes(i),
+                color: step?.colors[i],
               }))}
             />
           )}
@@ -91,7 +94,16 @@ export function QuestionScreen({ q, answers, players, revealed, locked, startedA
                 exit={{ opacity: 0 }}
                 transition={{ type: "spring", damping: 11, stiffness: 180 }}
               >
-                {quiz ? <QuizCallout q={q} answers={answers} players={players} startedAt={startedAt} /> : <PollCallout c={pollCallout(q, counts, total)} />}
+                {quiz ? (
+                  <QuizCallout q={q} answers={answers} players={players} startedAt={startedAt} />
+                ) : step ? (
+                  <Card className="bg-ruled p-8">
+                    <div className="whitespace-nowrap text-[52px] font-extrabold leading-none text-pen">{step.revealTitle}</div>
+                    <p className="mt-4 font-marker text-[40px] leading-tight text-pen">{step.revealNote}</p>
+                  </Card>
+                ) : (
+                  <PollCallout c={pollCallout(q, counts, total)} />
+                )}
               </motion.div>
             )}
           </AnimatePresence>

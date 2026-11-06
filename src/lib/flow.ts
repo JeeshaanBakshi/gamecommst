@@ -9,6 +9,8 @@ export const FOCUS_MS = 15_000;
 export interface ChoiceOption {
   label: string;
   emoji: string;
+  /** Shorter label for the projector chart (falls back to `label`). */
+  short?: string;
 }
 
 export interface QuestionDef {
@@ -23,6 +25,8 @@ export interface QuestionDef {
   /** Quiz: the right answer. Quizzes get a timer and a correct-answer reveal. */
   correct?: number;
   explain?: string;
+  /** Step-slider poll: one answer per player, coloured bars, tallest bar highlighted on reveal. */
+  stepPoll?: { colors: string[]; revealTitle: string; revealNote: string };
 }
 
 const HOURS: ChoiceOption[] = [
@@ -93,7 +97,30 @@ export const Q = {
     bad: [0],
   },
 
-  /* ---- quizzes (right/wrong, 15s timer) ---- */
+  /* ---- step-slider poll (not scored) ---- */
+  deadline: {
+    key: "deadline",
+    kind: "slider",
+    prompt: "An assignment is due at 11:59 PM. When do you ACTUALLY start?",
+    short: "Poll",
+    options: [
+      { label: "The day it's posted 😇", short: "When posted", emoji: "😇" },
+      { label: "3 days before", emoji: "📆" },
+      { label: "1 day before", emoji: "📅" },
+      { label: "Day of", emoji: "😐" },
+      { label: "9 PM", emoji: "🌙" },
+      { label: "11 PM", emoji: "😰" },
+      { label: "11:58 PM 💀", short: "11:58 PM", emoji: "💀" },
+    ],
+    bad: [],
+    stepPoll: {
+      colors: ["#2f9e44", "#5fa821", "#9bb10d", "#e8a800", "#f08c00", "#e8590c", "#e2342d"],
+      revealTitle: "Deadline cliff 📉",
+      revealNote: "Most of us start when the panic does. Plan it on Sunday instead.",
+    },
+  },
+
+  /* ---- quizzes (right/wrong, 20s timer) ---- */
   quiz_math135: {
     key: "quiz_math135",
     kind: "choice",
@@ -228,9 +255,11 @@ export const SCREENS: Screen[] = [
   ask(TALKS.eating, Q.meals),
   ask(TALKS.eating, Q.quiz_caffeine),
 
-  // Jeeshaan's section follows his speech: TIME → timeline → chain → the fix → Focus Challenge → study vs scroll.
+  // Jeeshaan's section follows his speech: TIME → timeline → chain → the fix → deadline slider poll → study vs scroll.
+  // (The Focus Challenge screen still exists: put back
+  //  { type: "focus", id: "focus-challenge", section: TALKS.courseload.section } here to use it.)
   ...talk(TALKS.courseload, "s4"),
-  { type: "focus", id: "focus-challenge", section: TALKS.courseload.section },
+  ask(TALKS.courseload, Q.deadline),
   { type: "double", id: "q-study-scroll", section: TALKS.courseload.section, qs: [Q.study, Q.scroll] },
 
   ...talk(TALKS.bald, "s5"),

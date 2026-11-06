@@ -15,6 +15,7 @@ import { QuizQuestion } from "./QuizQuestion";
 import { ResultCard } from "./ResultCard";
 import { Prompt, Shell } from "./Shell";
 import { SpeakerScreen } from "./SpeakerScreen";
+import { StepSliderPoll } from "./StepSliderPoll";
 import { Waiting } from "./Waiting";
 
 export function PlayApp() {
@@ -86,6 +87,9 @@ export function PlayApp() {
               onPick={(i) => save(s.q.key, { v: i, t: serverNow() })}
             />
           );
+        }
+        if (s.q.stepPoll) {
+          return <StepSliderPoll key={`${s.id}-${round ?? ""}`} q={s.q} value={v} locked={locked || revealed} onSubmit={(i) => save(s.q.key, { v: i })} />;
         }
         return s.q.kind === "slider" ? (
           <SliderQuestion key={s.id} q={s.q} value={v} locked={locked} revealed={revealed} onSubmit={(i) => save(s.q.key, { v: i })} />

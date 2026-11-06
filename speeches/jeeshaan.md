@@ -47,13 +47,13 @@ It's called self-explanation, and it's one of the most effective ways to study, 
 Fix three: phone away. Not face-down. Not on silent. Away. Face-down isn't away; it's just your phone hiding.
 
 Three habits. All free. No supplements, no hair transplant, no money needed.
-Now, let's see who was actually listening… and who was doomscrolling.
+Now, let's see how honest you are… and who was doomscrolling.
 
-## [QUIZ 1: Where should your phone be?]
+## [POLL: When do you ACTUALLY start?]
 
-*(It reveals by itself when time runs out or everyone has answered.)*
+*(Phones show a slider. Wait for most to submit, then click to reveal.)*
 
-(after reveal) In another room. Face-down isn't away, it's just your phone hiding. If you got that wrong, you were probably on your phone. Which brings us to…
+(after reveal) Deadline cliff. Most of us start when the panic does. Plan it on Sunday instead. Which brings us to…
 
 ## [QUIZ 2: Study vs Scroll]
 
