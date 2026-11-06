@@ -204,6 +204,7 @@ export type Screen =
       bigWord?: SlideDef["bigWord"];
       timeline?: SlideDef["timeline"];
       chain?: SlideDef["chain"];
+      board?: SlideDef["board"];
       /** Speaker's photo for the phones. */
       photo?: string;
       part: number;
@@ -231,6 +232,7 @@ function talk(t: TalkDef, id: string): Screen[] {
     bigWord: "bigWord" in s ? s.bigWord : undefined,
     timeline: "timeline" in s ? s.timeline : undefined,
     chain: "chain" in s ? s.chain : undefined,
+    board: "board" in s ? s.board : undefined,
     photo: SPEAKER_PHOTOS[t.speaker],
     part: i + 1,
     of: t.slides.length,

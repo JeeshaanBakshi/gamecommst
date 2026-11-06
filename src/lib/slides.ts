@@ -21,6 +21,8 @@ export interface SlideDef {
   timeline?: { events: TimelineEvent[]; gap?: { after: number; label: string; detail: string } };
   /** Cause → effect chain drawn left to right. The last box gets a balding head. */
   chain?: string[];
+  /** Polaroid photos pinned beside the bullets (put the images in /public/slides/). */
+  board?: { title?: string; photos: { src: string; caption: string }[]; feature?: { src: string; caption: string } };
 }
 
 export interface TimelineEvent {
@@ -230,6 +232,15 @@ export const TALKS = {
       {
         title: "Massage, LeBron, and your parents",
         emoji: "💆",
+        board: {
+          title: "Free massage from…",
+          photos: [
+            { src: "/slides/emmanuel-terry.jpg", caption: "Terry Crews" },
+            { src: "/slides/emmanuel-mbj.jpg", caption: "Michael B. Jordan" },
+            { src: "/slides/emmanuel-self.jpg", caption: "…or me" },
+          ],
+          feature: { src: "/slides/emmanuel-lebron.jpg", caption: "The LeBron route" },
+        },
         bullets: [
           "Free scalp massage (Terry Crews not included). Add an oil that suits your hair type",
           "Worst case: the LeBron route. Hair transplant, bald to Rapunzel",

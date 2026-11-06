@@ -4,9 +4,11 @@ import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 import Image from "next/image";
 import type { Screen } from "@/lib/flow";
+import { cx } from "../../ui";
 import { BaldWall } from "../BaldWall";
 import { BigWordSlide } from "../BigWordSlide";
 import { ChainSlide } from "../ChainSlide";
+import { PhotoBoard } from "../PhotoBoard";
 import { ShowerSlide } from "../ShowerSlide";
 import { TimelineSlide } from "../TimelineSlide";
 
@@ -80,7 +82,7 @@ export function TalkScreen({ s, corner, step = 0 }: { s: TalkDef; corner?: React
               initial={{ x: 40, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.3 + i * 0.18, type: "spring", damping: 16 }}
-              className="flex items-start gap-6 text-[50px] font-bold leading-[1.15]"
+              className={cx("flex items-start gap-6 font-bold leading-[1.15]", s.board ? "text-[42px]" : "text-[50px]")}
             >
               <span className="mt-2 grid h-12 w-12 shrink-0 place-items-center rounded-lg border-4 border-ink bg-paper font-marker text-3xl text-pen">✓</span>
               <span>{b}</span>
@@ -88,6 +90,8 @@ export function TalkScreen({ s, corner, step = 0 }: { s: TalkDef; corner?: React
           ))}
         </ul>
       </div>
+
+      {s.board && <PhotoBoard board={s.board} />}
 
       {s.image && (
         <motion.div
