@@ -20,8 +20,15 @@ export function PlayApp() {
   const g = usePlayerGame();
   const { phase, room, state, player, mine, status, notice, backend } = g;
   const answer = g.answer;
-  const save = useCallback((k: QuestionKey, v: AnswerValue) => void answer(k, v), [answer]);
-  const saveFocus = useCallback((v: AnswerValue) => answer("focus", v), [answer]);
+  // Every answer is tagged with the current round. After the host presses Redo the round changes,
+  // so old answers stop counting on this phone immediately, even before it re-syncs.
+  const round = state?.started_at ?? null;
+  const save = useCallback((k: QuestionKey, v: AnswerValue) => void answer(k, { ...v, r: round }), [answer, round]);
+  const saveFocus = useCallback((v: AnswerValue) => answer("focus", { ...v, r: round }), [answer, round]);
+  const my = (k: QuestionKey) => {
+    const a = mine[k];
+    return a && (a.r ?? null) === round ? a : undefined;
+  };
 
   // Deployed without Supabase keys: phones can't reach the host, so say so plainly.
   if (backend.mode === "local" && !isLocalMachine()) {
@@ -64,7 +71,7 @@ export function PlayApp() {
       case "talk":
         return <SpeakerScreen s={s} emoji={player!.emoji} />;
       case "question": {
-        const v = mine[s.q.key]?.v;
+        const v = my(s.q.key)?.v;
         if (s.q.correct != null) {
           return (
             <QuizQuestion
@@ -89,17 +96,17 @@ export function PlayApp() {
         return (
           <div className="flex flex-1 flex-col">
             <Prompt kicker="Be honest. We can't check. (We can.)">{a.prompt}</Prompt>
-            <ChoiceList compact q={a} value={mine[a.key]?.v} locked={locked} onPick={(i) => save(a.key, { v: i })} />
+            <ChoiceList compact q={a} value={my(a.key)?.v} locked={locked} onPick={(i) => save(a.key, { v: i })} />
             <h2 className="mb-3 mt-6 text-[1.7rem] font-extrabold leading-tight">{b.prompt}</h2>
-            <ChoiceList compact q={b} value={mine[b.key]?.v} locked={locked} onPick={(i) => save(b.key, { v: i })} />
+            <ChoiceList compact q={b} value={my(b.key)?.v} locked={locked} onPick={(i) => save(b.key, { v: i })} />
             <div className="mt-5">
-              <Status answered={mine[a.key] != null && mine[b.key] != null} locked={locked} revealed={revealed} />
+              <Status answered={my(a.key) != null && my(b.key) != null} locked={locked} revealed={revealed} />
             </div>
           </div>
         );
       }
       case "focus":
-        return <FocusChallenge key={`${s.id}-${state!.started_at ?? "wait"}`} startedAt={state!.started_at} revealed={revealed} saved={mine.focus} onUpdate={saveFocus} />;
+        return <FocusChallenge key={`${s.id}-${state!.started_at ?? "wait"}`} startedAt={state!.started_at} revealed={revealed} saved={my("focus")} onUpdate={saveFocus} />;
       case "finale":
         return <ResultCard backend={backend} roomId={room!.id} player={player!} startedAt={state!.started_at} />;
     }

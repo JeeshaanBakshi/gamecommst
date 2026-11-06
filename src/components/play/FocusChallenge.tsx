@@ -11,7 +11,7 @@ const NOTIFICATIONS = [
   { icon: "📸", app: "Snapchat", text: "New snap from Jacob" },
   { icon: "🔥", app: "", text: "Your streak is about to end!" },
   { icon: "💬", app: "Mom", text: "call me when you're free" },
-  { icon: "📊", app: "CS 135", text: "Grades released" },
+  { icon: "📢", app: "CS 135", text: "Midterm cancelled 🎉" },
   { icon: "🛍️", app: "Uber Eats", text: "50% off, 10 min only" },
 ];
 
@@ -166,15 +166,15 @@ export function FocusChallenge({ startedAt, revealed, saved, onUpdate }: Props) 
               e.stopPropagation();
               fail("Tapped a notification");
             }}
-            className="fixed inset-x-2 top-2 z-50 flex cursor-pointer items-center gap-3 rounded-2xl bg-white/95 px-4 py-3 shadow-xl ring-1 ring-black/10 backdrop-blur"
+            className="fixed inset-x-2 top-2 z-50 flex cursor-pointer items-center gap-4 rounded-3xl bg-white/95 px-5 py-5 shadow-2xl ring-1 ring-black/10 backdrop-blur"
             style={{ marginTop: "env(safe-area-inset-top)", touchAction: "none" }}
           >
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-ink/5 text-2xl">{toast.icon}</span>
-            <div className="min-w-0 flex-1 text-left leading-tight">
-              {toast.app && <div className="text-sm font-extrabold">{toast.app}</div>}
-              <div className="truncate text-sm font-medium">{toast.text}</div>
+            <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-ink/5 text-[2rem]">{toast.icon}</span>
+            <div className="min-w-0 flex-1 text-left leading-snug">
+              {toast.app && <div className="text-lg font-extrabold">{toast.app}</div>}
+              <div className="text-lg font-semibold">{toast.text}</div>
             </div>
-            <span className="self-start text-xs text-ink/50">now</span>
+            <span className="self-start text-sm text-ink/50">now</span>
           </motion.div>
         )}
       </AnimatePresence>

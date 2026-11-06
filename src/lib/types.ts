@@ -54,6 +54,8 @@ export interface AnswerValue {
   focus?: "holding" | "failed" | "done";
   /** Focus Challenge: how long they held, in ms. */
   ms?: number;
+  /** The round (game_state.started_at) this answer belongs to; a Redo starts a new round. */
+  r?: string | null;
 }
 
 export interface Answer {
