@@ -6,13 +6,14 @@ import { useHostGame } from "@/hooks/useHostGame";
 import { burst } from "@/lib/confetti";
 import { serverNow } from "@/lib/clock";
 import { publicSiteUrl } from "@/lib/env";
-import { isQuiz, QUIZ_MS, SCREENS, type Screen } from "@/lib/flow";
+import { FOCUS_MS, isQuiz, QUIZ_MS, SCREENS, type Screen } from "@/lib/flow";
 import { sfx } from "@/lib/sound";
 import { CONTROLS_H, HostControls } from "./HostControls";
 import { JoinBadge } from "./JoinBadge";
 import { Stage } from "./Stage";
 import { TopBar } from "./TopBar";
 import { FinaleScreen } from "./screens/FinaleScreen";
+import { FocusScreen } from "./screens/FocusScreen";
 import { LobbyScreen } from "./screens/LobbyScreen";
 import { QuestionScreen } from "./screens/QuestionScreen";
 import { StudyScrollScreen } from "./screens/StudyScrollScreen";
@@ -122,6 +123,21 @@ export function HostApp() {
     return () => clearTimeout(t);
   }, [quizKey, revealed, startedAt, quizAnswered, players.length, actions]);
 
+  /* Focus Challenge: show results once nobody is still holding after 15s (hard stop at 40s) */
+  const focusOn = current?.type === "focus";
+  const stillHolding = focusOn ? Object.values(answers.focus ?? {}).filter((v) => v.focus === "holding").length : 0;
+  const focusRevealedFor = useRef<string | null>(null);
+  useEffect(() => {
+    if (!focusOn || revealed || !startedAt || focusRevealedFor.current === startedAt) return;
+    const start = Date.parse(startedAt);
+    const deadline = stillHolding > 0 ? start + 40_000 : start + FOCUS_MS + 2_500;
+    const t = setTimeout(() => {
+      focusRevealedFor.current = startedAt;
+      actions.reveal();
+    }, Math.max(0, deadline - serverNow()));
+    return () => clearTimeout(t);
+  }, [focusOn, revealed, startedAt, stillHolding, actions]);
+
   if (error && !room)
     return (
       <Fullscreen
@@ -184,6 +200,8 @@ export function HostApp() {
         return <QuestionScreen q={s.q} answers={answers} players={players} revealed={state!.revealed} locked={state!.locked} startedAt={state!.started_at} />;
       case "double":
         return <StudyScrollScreen answers={answers} playerCount={players.length} revealed={state!.revealed} locked={state!.locked} />;
+      case "focus":
+        return <FocusScreen players={players} answers={answers} startedAt={state!.started_at} revealed={state!.revealed} />;
       case "finale":
         return <FinaleScreen startedAt={state!.started_at} players={players} answers={answers} />;
     }

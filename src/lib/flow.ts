@@ -3,6 +3,8 @@ import type { QuestionKey } from "./types";
 
 /** Quizzes auto-reveal after this long (or as soon as everyone has answered). */
 export const QUIZ_MS = 20_000;
+/** Focus Challenge: hold the button this long without getting distracted. */
+export const FOCUS_MS = 15_000;
 
 export interface ChoiceOption {
   label: string;
@@ -137,21 +139,6 @@ export const Q = {
     correct: 2,
     explain: "400 mg, about three cups of brewed coffee. Two big coffees and an energy drink gets you there fast.",
   },
-  quiz_phone: {
-    key: "quiz_phone",
-    kind: "choice",
-    prompt: "Where should your phone be while you study, so you focus best?",
-    short: "Quiz",
-    options: [
-      { label: "Face-down on your desk", emoji: "🙃" },
-      { label: "On silent in your pocket", emoji: "🤫" },
-      { label: "In another room", emoji: "🚪" },
-      { label: "In your hand, \"just in case\"", emoji: "🤳" },
-    ],
-    bad: [],
-    correct: 2,
-    explain: "In another room. In a UT Austin study, people did worse with their phone on the desk, even face-down and on silent. Out of sight = more brainpower.",
-  },
   quiz_genetics: {
     key: "quiz_genetics",
     kind: "choice",
@@ -197,6 +184,7 @@ export type Screen =
     }
   | { type: "question"; id: string; section: string; q: QuestionDef }
   | { type: "double"; id: string; section: string; qs: [QuestionDef, QuestionDef] }
+  | { type: "focus"; id: string; section: string }
   | { type: "finale"; id: string; section: string };
 
 function talk(t: TalkDef, id: string): Screen[] {
@@ -240,9 +228,9 @@ export const SCREENS: Screen[] = [
   ask(TALKS.eating, Q.meals),
   ask(TALKS.eating, Q.quiz_caffeine),
 
-  // Jeeshaan's section follows his speech: TIME → timeline → chain → the fix → phone quiz → study vs scroll.
+  // Jeeshaan's section follows his speech: TIME → timeline → chain → the fix → Focus Challenge → study vs scroll.
   ...talk(TALKS.courseload, "s4"),
-  ask(TALKS.courseload, Q.quiz_phone),
+  { type: "focus", id: "focus-challenge", section: TALKS.courseload.section },
   { type: "double", id: "q-study-scroll", section: TALKS.courseload.section, qs: [Q.study, Q.scroll] },
 
   ...talk(TALKS.bald, "s5"),

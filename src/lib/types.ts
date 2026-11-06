@@ -9,7 +9,7 @@ export type QuestionKey =
   | "quiz_sleep"
   | "quiz_caffeine"
   | "quiz_genetics"
-  | "quiz_phone";
+  | "focus";
 
 export interface Room {
   id: string;
@@ -50,6 +50,10 @@ export type NewPlayer = Omit<Player, "id" | "created_at">;
 export interface AnswerValue {
   v?: number;
   t?: number;
+  /** Focus Challenge: where the player is in their one attempt. */
+  focus?: "holding" | "failed" | "done";
+  /** Focus Challenge: how long they held, in ms. */
+  ms?: number;
 }
 
 export interface Answer {

@@ -153,3 +153,22 @@ export function quizStats(players: Player[], idx: AnswerIndex, key: QuestionKey,
     .sort((x, y) => x.ms - y.ms);
   return { answered, right: right.length, pctRight: pct(right.length, answered), fastest: right.slice(0, 3) };
 }
+
+/* ---------- Focus Challenge ---------- */
+
+export function focusStats(players: Player[], idx: AnswerIndex) {
+  const f = idx.focus ?? {};
+  const mine = players.map((p) => f[p.id]).filter((v): v is AnswerValue => !!v?.focus);
+  const failed = mine.filter((v) => v.focus === "failed");
+  const done = mine.filter((v) => v.focus === "done").length;
+  const holding = mine.filter((v) => v.focus === "holding").length;
+  return {
+    participants: mine.length,
+    holding,
+    done,
+    failed: failed.length,
+    stillFocused: holding + done,
+    pctFocused: pct(done, mine.length),
+    avgFailMs: failed.length ? avg(failed.map((v) => v.ms ?? 0)) : null,
+  };
+}

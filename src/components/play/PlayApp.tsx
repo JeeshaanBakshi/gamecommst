@@ -8,6 +8,7 @@ import { isLocalMachine } from "@/lib/env";
 import { SCREENS, type Screen } from "@/lib/flow";
 import type { AnswerValue, QuestionKey } from "@/lib/types";
 import { ChoiceList, ChoiceQuestion, SliderQuestion, Status } from "./Answering";
+import { FocusChallenge } from "./FocusChallenge";
 import { EnterCode, JoinForm } from "./JoinScreens";
 import { QuizQuestion } from "./QuizQuestion";
 import { ResultCard } from "./ResultCard";
@@ -20,6 +21,7 @@ export function PlayApp() {
   const { phase, room, state, player, mine, status, notice, backend } = g;
   const answer = g.answer;
   const save = useCallback((k: QuestionKey, v: AnswerValue) => void answer(k, v), [answer]);
+  const saveFocus = useCallback((v: AnswerValue) => answer("focus", v), [answer]);
 
   // Deployed without Supabase keys: phones can't reach the host, so say so plainly.
   if (backend.mode === "local" && !isLocalMachine()) {
@@ -96,6 +98,8 @@ export function PlayApp() {
           </div>
         );
       }
+      case "focus":
+        return <FocusChallenge key={`${s.id}-${state!.started_at ?? "wait"}`} startedAt={state!.started_at} revealed={revealed} saved={mine.focus} onUpdate={saveFocus} />;
       case "finale":
         return <ResultCard backend={backend} roomId={room!.id} player={player!} startedAt={state!.started_at} />;
     }

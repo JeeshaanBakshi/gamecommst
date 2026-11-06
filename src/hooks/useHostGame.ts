@@ -137,6 +137,9 @@ export function useHostGame(events: Events = {}) {
     if (!s) return;
     const scr = SCREENS[s.screen];
     if (isRevealable(scr) && !s.revealed) return write({ revealed: true, locked: true });
+    // Focus Challenge: → starts the round; results reveal on their own (or → again).
+    if (scr.type === "focus" && !s.started_at) return start();
+    if (scr.type === "focus" && !s.revealed) return write({ revealed: true, locked: true });
     if (scr.type === "finale" && !s.started_at) return start();
     goTo(s.screen + 1);
   }, [write, start, goTo]);
@@ -152,6 +155,10 @@ export function useHostGame(events: Events = {}) {
     const scr = SCREENS[s.screen];
     if (isRevealable(scr)) write({ revealed: !s.revealed, locked: !s.revealed ? true : s.locked });
     else if (scr.type === "finale" && !s.started_at) start();
+    else if (scr.type === "focus") {
+      if (!s.started_at) start();
+      else if (!s.revealed) write({ revealed: true, locked: true });
+    }
   }, [write, start]);
 
   const toggleLock = useCallback(() => {
