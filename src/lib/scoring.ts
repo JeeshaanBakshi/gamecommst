@@ -70,10 +70,12 @@ export interface Factor {
   hit: boolean;
 }
 
+/** One point per factor below. */
+export const MAX_SCORE = 5;
+
 export interface BaldResult {
   score: number;
   factors: Factor[];
-  pulseDelta: number | null;
 }
 
 export function baldScoreFor(idx: AnswerIndex, playerId: string): BaldResult {
@@ -84,9 +86,6 @@ export function baldScoreFor(idx: AnswerIndex, playerId: string): BaldResult {
   const study = g("study")?.v;
   const scroll = g("scroll")?.v;
   const family = g("family")?.v;
-  const before = g("pulse_before")?.bpm;
-  const after = g("pulse_after")?.bpm;
-  const pulseDelta = before != null && after != null ? after - before : null;
 
   const factors: Factor[] = [
     { key: "stress", label: "Stress level 4 or 5", emoji: "😵", hit: stress != null && stress >= 3 },
@@ -99,9 +98,8 @@ export function baldScoreFor(idx: AnswerIndex, playerId: string): BaldResult {
       hit: study != null && scroll != null && scroll > study,
     },
     { key: "family", label: "Baldness runs in the family", emoji: "🧬", hit: family === 0 },
-    { key: "pulse", label: "Heart rate went up under pressure", emoji: "💓", hit: pulseDelta != null && pulseDelta > 0 },
   ];
-  return { score: factors.filter((f) => f.hit).length, factors, pulseDelta };
+  return { score: factors.filter((f) => f.hit).length, factors };
 }
 
 export interface Ranked {
@@ -110,14 +108,13 @@ export interface Ranked {
   rank: number;
 }
 
-/** Highest score first ("closest to bald"). Ties broken by stress, then pulse spike. */
+/** Highest score first ("closest to bald"). Ties broken by stress level. */
 export function rankPlayers(players: Player[], idx: AnswerIndex): Ranked[] {
   const rows = players.map((player) => ({ player, result: baldScoreFor(idx, player.id) }));
   rows.sort(
     (a, b) =>
       b.result.score - a.result.score ||
       (idx.stress?.[b.player.id]?.v ?? -1) - (idx.stress?.[a.player.id]?.v ?? -1) ||
-      (b.result.pulseDelta ?? -999) - (a.result.pulseDelta ?? -999) ||
       a.player.nickname.localeCompare(b.player.nickname),
   );
   return rows.map((r, i) => ({ ...r, rank: i + 1 }));
@@ -140,7 +137,7 @@ export const TIERS: Tier[] = [
 export function tierFor(score: number): Tier {
   if (score <= 1) return TIERS[0];
   if (score <= 3) return TIERS[1];
-  if (score <= 5) return TIERS[2];
+  if (score <= 4) return TIERS[2];
   return TIERS[3];
 }
 
@@ -157,32 +154,18 @@ export function quizStats(players: Player[], idx: AnswerIndex, key: QuestionKey,
   return { answered, right: right.length, pctRight: pct(right.length, answered), fastest: right.slice(0, 3) };
 }
 
-/* ---------- stress test ---------- */
+/* ---------- stress test (math round) ---------- */
 
-export function pulseStats(idx: AnswerIndex) {
-  const before = idx.pulse_before ?? {};
-  const after = idx.pulse_after ?? {};
-  const bVals = Object.values(before).map((a) => a.bpm ?? 0).filter(Boolean);
-  const aVals = Object.values(after).map((a) => a.bpm ?? 0).filter(Boolean);
-  let both = 0;
-  let up = 0;
-  for (const pid of Object.keys(after)) {
-    const b = before[pid]?.bpm;
-    const a = after[pid]?.bpm;
-    if (b && a) {
-      both++;
-      if (a > b) up++;
-    }
-  }
-  return {
-    avgBefore: Math.round(avg(bVals)),
-    avgAfter: Math.round(avg(aVals)),
-    nBefore: bVals.length,
-    nAfter: aVals.length,
-    both,
-    up,
-    pctUp: pct(up, both),
-  };
+export function mathStats(idx: AnswerIndex) {
+  const vals = Object.values(idx.math ?? {}).map((m) => m.correct ?? 0);
+  const counts = [0, 1, 2, 3, 4, 5].map((c) => vals.filter((v) => v === c).length);
+  return { counts, n: vals.length, avg: avg(vals), pctPerfect: pct(counts[5], vals.length) };
+}
+
+export function mathCaption(avg5: number) {
+  if (avg5 >= 4) return "Big brains. Suspiciously small stress.";
+  if (avg5 >= 2.5) return "Respectable under pressure. Hairline holding.";
+  return "Math is hard when a goose is watching.";
 }
 
 export function mathLeaderboard(players: Player[], idx: AnswerIndex) {

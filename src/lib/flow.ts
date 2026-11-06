@@ -2,7 +2,6 @@ import { TALKS, type TalkDef } from "./slides";
 import type { QuestionKey } from "./types";
 
 export const MATH_DURATION_MS = 30_000;
-export const PULSE_SECONDS = 15;
 /** Quizzes auto-reveal after this long (or as soon as everyone has answered). */
 export const QUIZ_MS = 15_000;
 
@@ -174,7 +173,6 @@ export type Screen =
     }
   | { type: "question"; id: string; section: string; q: QuestionDef }
   | { type: "double"; id: string; section: string; qs: [QuestionDef, QuestionDef] }
-  | { type: "pulse"; id: string; section: string; key: "pulse_before" | "pulse_after" }
   | { type: "math"; id: string; section: string }
   | { type: "stressResults"; id: string; section: string }
   | { type: "finale"; id: string; section: string };
@@ -218,9 +216,7 @@ export const SCREENS: Screen[] = [
 
   ...talk(TALKS.courseload, "s4"),
   { type: "double", id: "q-study-scroll", section: TALKS.courseload.section, qs: [Q.study, Q.scroll] },
-  { type: "pulse", id: "pulse-before", section: ST, key: "pulse_before" },
   { type: "math", id: "math", section: ST },
-  { type: "pulse", id: "pulse-after", section: ST, key: "pulse_after" },
   { type: "stressResults", id: "stress-results", section: ST },
 
   ...talk(TALKS.bald, "s5"),
@@ -236,8 +232,6 @@ export function screenKeys(screen: Screen): QuestionKey[] {
       return [screen.q.key];
     case "double":
       return [screen.qs[0].key, screen.qs[1].key];
-    case "pulse":
-      return [screen.key];
     case "math":
       return ["math"];
     default:

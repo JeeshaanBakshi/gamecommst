@@ -14,7 +14,6 @@ import { TopBar } from "./TopBar";
 import { FinaleScreen } from "./screens/FinaleScreen";
 import { LobbyScreen } from "./screens/LobbyScreen";
 import { MathScreen } from "./screens/MathScreen";
-import { PulseScreen } from "./screens/PulseScreen";
 import { QuestionScreen } from "./screens/QuestionScreen";
 import { StressResultsScreen } from "./screens/StressResultsScreen";
 import { StudyScrollScreen } from "./screens/StudyScrollScreen";
@@ -166,8 +165,6 @@ export function HostApp() {
         return <QuestionScreen q={s.q} answers={answers} players={players} revealed={state!.revealed} locked={state!.locked} startedAt={state!.started_at} />;
       case "double":
         return <StudyScrollScreen {...common} revealed={state!.revealed} locked={state!.locked} />;
-      case "pulse":
-        return <PulseScreen round={s.key} {...common} locked={state!.locked} />;
       case "math":
         return <MathScreen startedAt={state!.started_at} players={players} answers={answers} />;
       case "stressResults":

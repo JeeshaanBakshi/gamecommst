@@ -122,8 +122,8 @@ export const TALKS = {
         alert: true,
         bullets: [
           "Under pressure, adrenaline kicks in and your heart rate jumps",
-          "Pulse check → 30s of mental math → pulse check again",
-          "We're about to measure it. Live. On you.",
+          "30 seconds of mental math. 5 questions. No calculators.",
+          "Let's see how you handle the pressure. Live.",
         ],
       },
     ],

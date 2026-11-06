@@ -1,6 +1,6 @@
 # The Waterloo Effect: How Not to Go Bald
 
-A live audience game for our class presentation. The projector shows a QR code. Everyone joins on their phone with a nickname and an emoji. They answer questions about stress, sleep, food, and doomscrolling, run a pulse + mental-math stress test, and at the end find out who in the room is **closest to bald**.
+A live audience game for our class presentation. The projector shows a QR code. Everyone joins on their phone with a nickname and an emoji. They answer questions about stress, sleep, food, and doomscrolling, take a 30-second mental-math stress test, and at the end find out who in the room is **closest to bald**.
 
 - **`/host`**: the projector view (16:9, laid out at 1920×1080 and scaled to fit any screen)
 - **`/play`**: the phone view (mobile-first, works on iOS Safari)
@@ -84,7 +84,7 @@ Every section works the same way: **the speaker's slides → a poll → a quiz.*
 | 1 | Gurshaan | What is the Waterloo Effect? · Why stress hits your hair | Stress slider 1–5 → quiz: when does stress shedding start? |
 | 2 | Austin | Sleep deprivation · The all-nighter math | Hours of sleep → quiz: how much sleep do adults need? |
 | 3 | Jacob | Eating habits · Hair-friendly fuel | Meals skipped → quiz: classic cause of shedding? |
-| 4 | Jeeshaan | Managing courseload · STRESS TEST | Study vs doomscroll → pulse #1 → 30s mental math → pulse #2 → before/after BPM + speed leaderboard |
+| 4 | Jeeshaan | Managing courseload · STRESS TEST | Study vs doomscroll → 30s mental math stress test → results + speed leaderboard |
 | 5 | Gurshaan | How not to go bald · The prescription | Family history → quiz: #1 cause of permanent hair loss? → **Closest to Bald** finale |
 
 - **Polls** (feed the bald score) stay open until you press → to reveal.
@@ -94,20 +94,20 @@ Every section works the same way: **the speaker's slides → a poll → a quiz.*
 
 ### Bald score
 
-+1 each for: stress ≥ 4 · sleep < 6h · skipping 4+ meals · doomscroll > study · family history = yes · heart rate went up during the test.
++1 each for: stress ≥ 4 · sleep < 6h · skipping 4+ meals · doomscroll > study · family history = yes (max 5).
 
 | Score | Tier |
 |-------|------|
 | 0–1 | Full Luscious Locks |
 | 2–3 | Slight Breeze Detected |
-| 4–5 | Forehead Expansion Pack |
-| 6 | Certified Waterloo Graduate |
+| 4 | Forehead Expansion Pack |
+| 5 | Certified Waterloo Graduate |
 
 *Just for fun. Stress causes temporary shedding; genetics is the main cause of permanent hair loss.*
 
 ## Rehearsing without an audience
 
-On `/host`, click **+30 fake**. Thirty bots join and **Bots on** switches on automatically. Bots answer every question, measure "pulses", and race through the math round on realistic delays. They write through the real backend, so you're testing the live sync too. Click **Reset room** when you're done; it wipes players and answers and sends every phone back to the join screen.
+On `/host`, click **+30 fake**. Thirty bots join and **Bots on** switches on automatically. Bots answer every question and race through the math round on realistic delays. They write through the real backend, so you're testing the live sync too. Click **Reset room** when you're done; it wipes players and answers and sends every phone back to the join screen.
 
 ## Reliability notes
 
@@ -125,7 +125,7 @@ src/
   app/                 routes: / (landing), /host, /play
   components/
     host/              Stage (16:9 scaler), TopBar, HostControls, BarChart, screens/*
-    play/              Join, Waiting, Answering (scantron buttons + slider), PulseTask, MathTask, ResultCard
+    play/              Join, Waiting, Answering (scantron buttons + slider), QuizQuestion, SpeakerScreen, MathTask, ResultCard
     BaldHead.tsx       SVG head whose hairline recedes with the score
     ui.tsx             Buttons, stickers, red-pen circle, caution tape, cards
   hooks/

@@ -4,8 +4,6 @@ export type QuestionKey =
   | "meals"
   | "study"
   | "scroll"
-  | "pulse_before"
-  | "pulse_after"
   | "math"
   | "family"
   | "quiz_shed"
@@ -51,13 +49,10 @@ export type NewPlayer = Omit<Player, "id" | "created_at">;
 
 /**
  * Choice / slider answers store the 0-based option index in `v`.
- * Pulse answers store `bpm` (and the raw 15s `count`).
  * Math answers store progress: `correct`, `ms` (time of last correct answer), `done`.
  */
 export interface AnswerValue {
   v?: number;
-  bpm?: number;
-  count?: number;
   correct?: number;
   ms?: number;
   done?: boolean;

@@ -53,7 +53,7 @@ export function MathTask({ seed, emoji, startedAt, saved, onProgress }: Props) {
         <p className="mt-6 font-marker text-2xl text-pen">
           {correct === 5 ? "Big brain. Small stress?" : correct >= 3 ? "Respectable under pressure." : "Math is hard when a goose is watching."}
         </p>
-        <p className="mt-6 font-bold">Now check your pulse when the host says so ❤️</p>
+        <p className="mt-6 font-bold">Eyes on the big screen 👀</p>
       </div>
     );
   }

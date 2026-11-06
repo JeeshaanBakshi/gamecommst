@@ -9,7 +9,6 @@ import type { AnswerValue, QuestionKey } from "@/lib/types";
 import { ChoiceList, ChoiceQuestion, SliderQuestion, Status } from "./Answering";
 import { EnterCode, JoinForm } from "./JoinScreens";
 import { MathTask } from "./MathTask";
-import { PulseTask } from "./PulseTask";
 import { QuizQuestion } from "./QuizQuestion";
 import { ResultCard } from "./ResultCard";
 import { Prompt, Shell } from "./Shell";
@@ -89,18 +88,15 @@ export function PlayApp() {
           </div>
         );
       }
-      case "pulse":
-        return <PulseTask key={s.id} round={s.key} saved={mine[s.key]} before={mine.pulse_before} locked={locked} onSubmit={(v) => save(s.key, v)} />;
       case "math":
         return <MathTask key={`${s.id}-${state!.started_at ?? "wait"}`} seed={room!.code} emoji={player!.emoji} startedAt={state!.started_at} saved={mine.math} onProgress={saveMath} />;
       case "stressResults": {
-        const b = mine.pulse_before?.bpm;
-        const a = mine.pulse_after?.bpm;
+        const m = mine.math;
         return (
           <Waiting
             emoji={player!.emoji}
-            title={b && a ? `${b} → ${a} BPM` : "Results on the big screen!"}
-            sub={b && a ? (a > b ? `Your heart rate went up ${a - b} BPM 📈` : "Your heart stayed chill 🧊") : undefined}
+            title={m ? `You got ${m.correct ?? 0}/5` : "Results on the big screen!"}
+            sub={m ? (m.correct === 5 ? "Perfect score. Your hairline thanks you 🧠" : "Eyes up for the leaderboard 👀") : undefined}
           />
         );
       }

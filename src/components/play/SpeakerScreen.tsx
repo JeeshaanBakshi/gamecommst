@@ -32,7 +32,7 @@ export function SpeakerScreen({ s, emoji }: { s: TalkDef; emoji: string }) {
         transition={{ delay: 0.3, type: "spring" }}
         className="mt-8 rounded-2xl border-[3px] border-ink bg-ink px-5 py-4 font-marker text-2xl leading-snug text-gold shadow-hard-sm"
       >
-        {s.alert ? "Get ready. Your heart rate is about to become data." : "Pay attention if you don't wanna go bald."}
+        {s.alert ? "Get ready. 30 seconds of math is coming for you." : "Pay attention if you don't wanna go bald."}
       </motion.p>
 
       {s.of > 1 && <div className="mt-6 font-mono text-xs font-bold uppercase opacity-60">slide {s.part} of {s.of}</div>}

@@ -6,7 +6,7 @@ import type { Backend } from "@/lib/backend";
 import { burst } from "@/lib/confetti";
 import { finaleTimeline } from "@/lib/finale";
 import { useNow } from "@/hooks/useNow";
-import { rankPlayers, tierFor, type Ranked } from "@/lib/scoring";
+import { MAX_SCORE, rankPlayers, tierFor, type Ranked } from "@/lib/scoring";
 import { indexAnswers, type Player } from "@/lib/types";
 import { BaldHead } from "../BaldHead";
 import { cx, DISCLAIMER } from "../ui";
@@ -63,7 +63,7 @@ export function ResultCard({ backend, roomId, player, startedAt }: Props) {
         </h1>
         <p className="mt-2 font-marker text-lg leading-snug text-pen">{tier.blurb}</p>
         <div className="mt-3 font-mono text-sm font-bold">
-          {me.result.score}/6 bald points · #{me.rank} of {total} closest to bald
+          {me.result.score}/{MAX_SCORE} bald points · #{me.rank} of {total} closest to bald
         </div>
         <ul className="mt-4 space-y-1.5 text-left">
           {me.result.factors.map((f) => (

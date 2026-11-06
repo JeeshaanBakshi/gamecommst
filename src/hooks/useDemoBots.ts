@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { serverNow } from "@/lib/clock";
-import { botChoice, botMathPlan, botPulse } from "@/lib/demo";
+import { botChoice, botMathPlan } from "@/lib/demo";
 import { isQuiz, QUIZ_MS, SCREENS, screenKeys } from "@/lib/flow";
 import type { HostGame } from "./useHostGame";
 
@@ -55,14 +55,11 @@ export function useDemoBots(game: HostGame, enabled: boolean) {
       for (const p of fakes) {
         keys.forEach((key, k) => {
           if (answersRef.current[key]?.[p.id]) return;
-          const spread = screen.type === "pulse" ? 14000 : isQuiz(screen) ? QUIZ_MS - 3000 : 6500;
+          const spread = isQuiz(screen) ? QUIZ_MS - 3000 : 6500;
           const wait = 600 + Math.random() * spread + k * 2500;
           timers.push(
             setTimeout(() => {
-              const value =
-                key === "pulse_before" || key === "pulse_after"
-                  ? botPulse(key, answersRef.current.pulse_before?.[p.id]?.bpm)
-                  : botChoice(key, serverNow());
+              const value = botChoice(key, serverNow());
               void backend.upsertAnswers([{ room_id: room.id, player_id: p.id, question: key, value }]).catch(() => {});
             }, wait),
           );

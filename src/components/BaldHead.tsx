@@ -2,9 +2,10 @@
 
 import { motion } from "framer-motion";
 import { useId } from "react";
+import { MAX_SCORE } from "@/lib/scoring";
 
 interface Props {
-  /** 0 (full locks) → 6 (certified Waterloo graduate) */
+  /** 0 (full locks) → MAX_SCORE (certified Waterloo graduate) */
   score: number;
   size?: number;
   emoji?: string;
@@ -18,7 +19,7 @@ const HAIR = "#1b1b1b";
 
 export function BaldHead({ score, size = 120, emoji, recede = false, delay = 0 }: Props) {
   const id = useId().replace(/:/g, "");
-  const t = Math.max(0, Math.min(1, score / 6));
+  const t = Math.max(0, Math.min(1, score / MAX_SCORE));
   const tr = { duration: recede ? 1.6 : 0.6, delay, ease: [0.3, 0.8, 0.3, 1] as const };
 
   const hairR = 38 + 7 * (1 - t);
@@ -62,7 +63,7 @@ export function BaldHead({ score, size = 120, emoji, recede = false, delay = 0 }
         </g>
 
         {/* lonely comb-over strands */}
-        {score >= 4 && score < 6 && (
+        {t >= 0.7 && t < 1 && (
           <motion.g
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -73,7 +74,7 @@ export function BaldHead({ score, size = 120, emoji, recede = false, delay = 0 }
             strokeLinecap="round"
           >
             <path d="M44 22 q 6 -9 14 -3" />
-            {score === 4 && <path d="M50 21 q 7 -7 13 0" />}
+            {t < 0.85 && <path d="M50 21 q 7 -7 13 0" />}
           </motion.g>
         )}
 

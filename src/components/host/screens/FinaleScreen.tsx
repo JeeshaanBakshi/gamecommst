@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 import { useNow } from "@/hooks/useNow";
 import { burst } from "@/lib/confetti";
 import { finaleTimeline } from "@/lib/finale";
-import { rankPlayers, tierFor, TIERS, type Ranked } from "@/lib/scoring";
+import { MAX_SCORE, rankPlayers, tierFor, TIERS, type Ranked } from "@/lib/scoring";
 import { sfx } from "@/lib/sound";
 import type { AnswerIndex, Player } from "@/lib/types";
 import { BaldHead } from "../../BaldHead";
@@ -23,7 +23,6 @@ const RUBRIC = [
   ["🍽️", "Skip 4+ meals/week"],
   ["📱", "Doomscroll > study"],
   ["🧬", "Family history"],
-  ["💓", "Heart rate went up"],
 ];
 
 export function FinaleScreen({ startedAt, players, answers }: Props) {
@@ -98,7 +97,8 @@ export function FinaleScreen({ startedAt, players, answers }: Props) {
                   <div className="mt-3 text-4xl font-extrabold">
                     {tierFor(winner.result.score).emoji} {tierFor(winner.result.score).name}
                   </div>
-                  <div className="mt-2 font-mono text-3xl font-bold">{winner.result.score}/6 bald points</div>
+                  <div className="mt-2 font-mono text-3xl font-bold">{winner.result.score}/{MAX_SCORE} bald points</div>
+                  {winner.result.score === MAX_SCORE && (
                   <motion.div
                     initial={{ scale: 3, opacity: 0, rotate: -40 }}
                     animate={{ scale: 1, opacity: 1, rotate: -16 }}
@@ -107,6 +107,7 @@ export function FinaleScreen({ startedAt, players, answers }: Props) {
                   >
                     <span className="text-3xl">Certified</span>
                   </motion.div>
+                  )}
                 </motion.div>
               )
             )}
@@ -158,7 +159,7 @@ function Row({ r, shown }: { r: Ranked; shown: boolean }) {
             <BaldHead score={r.result.score} size={70} emoji={r.player.emoji} recede delay={0.2} />
             <span className="min-w-0 flex-1 truncate text-4xl font-extrabold">{r.player.nickname}</span>
             <span className="flex gap-1.5">
-              {Array.from({ length: 6 }, (_, i) => (
+              {Array.from({ length: MAX_SCORE }, (_, i) => (
                 <span key={i} className={cx("h-6 w-6 rounded-full border-[3px] border-ink", i < r.result.score ? "bg-ink" : "bg-paper")} />
               ))}
             </span>
@@ -183,7 +184,7 @@ function FinaleIntro() {
           to bald<span className="text-pen">?</span>
         </h1>
         <div className="mt-10 flex items-end gap-6">
-          {[0, 2, 4, 6].map((s, i) => (
+          {[0, 2, 4, 5].map((s, i) => (
             <motion.div key={s} initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 + i * 0.15 }} className="text-center">
               <BaldHead score={s} size={150} />
               <div className="mt-2 w-[170px] text-xl font-extrabold leading-tight">{TIERS[i].name}</div>

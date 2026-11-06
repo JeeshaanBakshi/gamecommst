@@ -60,16 +60,6 @@ export function botChoice(key: QuestionKey, t?: number): AnswerValue {
   return { v: weighted(WEIGHTS[key] ?? [1, 1, 1, 1]) };
 }
 
-export function botPulse(key: "pulse_before" | "pulse_after", before?: number): AnswerValue {
-  if (key === "pulse_before" || !before) {
-    const count = 15 + Math.floor(Math.random() * 9); // 60–92 bpm
-    return { count, bpm: count * 4 };
-  }
-  const delta = Math.round((Math.random() * 7 - 1.5)); // mostly up
-  const count = Math.max(10, before / 4 + delta);
-  return { count, bpm: count * 4 };
-}
-
 /** A plan of when each bot gets each math question right during the 30s round. */
 export function botMathPlan(): { atMs: number; correct: number; done: boolean }[] {
   const skill = Math.random();
