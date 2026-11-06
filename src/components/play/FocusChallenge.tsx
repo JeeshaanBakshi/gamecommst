@@ -8,11 +8,11 @@ import { cx } from "../ui";
 import { Banner } from "./Shell";
 
 const NOTIFICATIONS = [
-  { icon: "📸", app: "Snapchat", text: "New snap from Jacob" },
-  { icon: "🔥", app: "", text: "Your streak is about to end!" },
-  { icon: "💬", app: "Mom", text: "call me when you're free" },
-  { icon: "📢", app: "CS 135", text: "Midterm cancelled 🎉" },
-  { icon: "🛍️", app: "Uber Eats", text: "50% off, 10 min only" },
+  { icon: "📸", app: "Snapchat", text: "New snap from Jacob", color: "#FFFC00" },
+  { icon: "🔥", app: "", text: "Your streak is about to end!", color: "#FF9500" },
+  { icon: "💬", app: "Mom", text: "call me when you're free", color: "#34C759" },
+  { icon: "📢", app: "CS 135", text: "Midterm cancelled 🎉", color: "#4C8BF5" },
+  { icon: "🛍️", app: "Uber Eats", text: "50% off, 10 min only", color: "#06C167" },
 ];
 
 type Phase = "ready" | "holding" | "failed" | "done";
@@ -134,6 +134,42 @@ export function FocusChallenge({ startedAt, revealed, saved, onUpdate }: Props) 
     raf.current = requestAnimationFrame(tick);
   };
 
+  /*
+   * Touchscreens: follow the finger with real touch events and block the phone's own
+   * scroll / long-press gestures. Browsers can fire a spurious "pointercancel" during a long
+   * press even though the finger never left the screen, so on touch we only fail when the
+   * finger actually lifts (touchend) or the OS interrupts the touch (touchcancel).
+   */
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const latest = useRef({ canStart: false, begin, fail });
+  useEffect(() => {
+    latest.current = { canStart: !!startedAt && !revealed && phase === "ready", begin, fail };
+  });
+  const showButton = phase === "ready" || phase === "holding";
+  useEffect(() => {
+    const el = buttonRef.current;
+    if (!showButton || !el) return;
+    const onStart = (e: TouchEvent) => {
+      e.preventDefault();
+      if (latest.current.canStart && phaseRef.current !== "holding") latest.current.begin();
+    };
+    const onMove = (e: TouchEvent) => e.preventDefault();
+    const onEnd = (e: TouchEvent) => {
+      if (e.targetTouches.length === 0) latest.current.fail("Let go");
+    };
+    const onCancel = () => latest.current.fail("Touch interrupted");
+    el.addEventListener("touchstart", onStart, { passive: false });
+    el.addEventListener("touchmove", onMove, { passive: false });
+    el.addEventListener("touchend", onEnd);
+    el.addEventListener("touchcancel", onCancel);
+    return () => {
+      el.removeEventListener("touchstart", onStart);
+      el.removeEventListener("touchmove", onMove);
+      el.removeEventListener("touchend", onEnd);
+      el.removeEventListener("touchcancel", onCancel);
+    };
+  }, [showButton]);
+
   // Switching apps / locking the phone mid-hold = distracted.
   useEffect(() => {
     const onHide = () => document.visibilityState === "hidden" && fail("Left the app");
@@ -158,23 +194,30 @@ export function FocusChallenge({ startedAt, revealed, saved, onUpdate }: Props) 
         {toast && holding && (
           <motion.div
             key={toast.id}
-            initial={{ y: -140, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -140, opacity: 0 }}
-            transition={{ type: "spring", damping: 20, stiffness: 260 }}
+            initial={{ y: -260, opacity: 0, rotate: 0 }}
+            animate={{ y: 0, opacity: 1, rotate: [0, 0, -2, 2, -1.5, 1, 0] }}
+            exit={{ y: -260, opacity: 0 }}
+            transition={{ y: { type: "spring", damping: 18, stiffness: 240 }, rotate: { duration: 0.7, delay: 0.25 } }}
             onPointerDown={(e) => {
               e.stopPropagation();
               fail("Tapped a notification");
             }}
-            className="fixed inset-x-2 top-2 z-50 flex cursor-pointer items-center gap-4 rounded-3xl bg-white/95 px-5 py-5 shadow-2xl ring-1 ring-black/10 backdrop-blur"
+            className="fixed inset-x-3 top-3 z-50 cursor-pointer rounded-[28px] bg-white px-5 pb-4 pt-5 shadow-2xl ring-1 ring-black/10"
             style={{ marginTop: "env(safe-area-inset-top)", touchAction: "none" }}
           >
-            <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-ink/5 text-[2rem]">{toast.icon}</span>
-            <div className="min-w-0 flex-1 text-left leading-snug">
-              {toast.app && <div className="text-lg font-extrabold">{toast.app}</div>}
-              <div className="text-lg font-semibold">{toast.text}</div>
+            <div className="flex items-center gap-4">
+              <span className="grid h-[72px] w-[72px] shrink-0 place-items-center rounded-2xl text-[2.6rem] shadow-inner" style={{ background: toast.color }}>
+                {toast.icon}
+              </span>
+              <div className="min-w-0 flex-1 text-left leading-tight">
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className="text-xl font-extrabold">{toast.app || "Notification"}</span>
+                  <span className="text-sm text-ink/50">now</span>
+                </div>
+                <div className="mt-1 text-2xl font-bold">{toast.text}</div>
+              </div>
             </div>
-            <span className="self-start text-sm text-ink/50">now</span>
+            <div className="mt-4 rounded-2xl bg-ink py-3 text-center text-xl font-extrabold text-gold">Open →</div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -193,17 +236,18 @@ export function FocusChallenge({ startedAt, revealed, saved, onUpdate }: Props) 
           <button
             type="button"
             disabled={!canStart && !holding}
+            ref={buttonRef}
             onPointerDown={(e) => {
-              if (!canStart) return;
+              if (e.pointerType === "touch" || !canStart) return; // touch is handled by the touch listeners
               e.preventDefault();
               try {
                 e.currentTarget.setPointerCapture(e.pointerId);
               } catch {}
               begin();
             }}
-            onPointerUp={() => fail("Let go")}
-            onPointerCancel={() => fail("Touch interrupted")}
-            onPointerLeave={() => fail("Let go")}
+            onPointerUp={(e) => e.pointerType !== "touch" && fail("Let go")}
+            onPointerCancel={(e) => e.pointerType !== "touch" && fail("Interrupted")}
+            onPointerLeave={(e) => e.pointerType !== "touch" && fail("Let go")}
             onContextMenu={(e) => e.preventDefault()}
             className={cx("relative h-[280px] w-[280px] rounded-full outline-none", !canStart && !holding && "opacity-50")}
             style={{ touchAction: "none", userSelect: "none", WebkitUserSelect: "none", WebkitTouchCallout: "none" }}
