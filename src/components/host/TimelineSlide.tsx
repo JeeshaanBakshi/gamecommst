@@ -1,67 +1,76 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import type { SlideDef } from "@/lib/slides";
 import { cx } from "../ui";
 
 type Timeline = NonNullable<SlideDef["timeline"]>;
 
-/** Total clicks a timeline takes: one per event, plus one for the gap bracket. */
+/** Clicks a timeline takes: events appear on their own, one click reveals the gap bracket. */
 export function timelineSteps(t: Timeline) {
-  return t.events.length + (t.gap ? 1 : 0);
+  return t.gap ? 1 : 0;
 }
+
+/** Seconds between each event sliding in automatically. */
+const EVENT_GAP_S = 1.1;
 
 const CARD_H = 128;
 // Vertical position of each event (px). The long first gap is "the rest of the day";
 // the short one before the midterm is the punchline.
 const TOPS = [0, 400, 668];
 
-/** A day, revealed one click at a time, ending with the red "40 min" bracket. */
+/** A day: the events slide in by themselves, then one click stamps the red "40 min" bracket. */
 export function TimelineSlide({ t, step }: { t: Timeline; step: number }) {
-  const showGap = !!t.gap && step > t.events.length;
+  const showGap = !!t.gap && step >= 1;
+  const at = (i: number) => 0.3 + i * EVENT_GAP_S;
   const gapTop = t.gap ? TOPS[t.gap.after] + CARD_H : 0;
   const gapH = t.gap ? TOPS[t.gap.after + 1] - gapTop : 0;
 
   return (
     <div className="relative h-[796px] w-[980px]">
       {/* axis: dashed through the long stretch of the day */}
-      {step >= 2 && (
+      {t.events.length > 1 && (
         <motion.div
           initial={{ scaleY: 0 }}
           animate={{ scaleY: 1 }}
-          transition={{ duration: 0.5 }}
+          transition={{ delay: at(1) - 0.3, duration: 0.5 }}
           className="absolute left-[22px] w-0 origin-top border-l-[6px] border-dashed border-ink/40"
           style={{ top: CARD_H / 2, height: TOPS[1] - CARD_H / 2 }}
         />
       )}
-      {step >= 3 && <div className="absolute left-[22px] w-[6px] bg-ink" style={{ top: TOPS[1] + CARD_H / 2, height: TOPS[2] - TOPS[1] }} />}
+      {t.events.length > 2 && (
+        <motion.div
+          initial={{ scaleY: 0 }}
+          animate={{ scaleY: 1 }}
+          transition={{ delay: at(2) - 0.3, duration: 0.4 }}
+          className="absolute left-[22px] w-[6px] origin-top bg-ink"
+          style={{ top: TOPS[1] + CARD_H / 2, height: TOPS[2] - TOPS[1] }}
+        />
+      )}
 
       {t.events.map((e, i) => (
-        <AnimatePresence key={e.label}>
-          {step > i && (
-            <motion.div
-              initial={{ x: 120, opacity: 0, rotate: 3 }}
-              animate={{ x: 0, opacity: 1, rotate: 0 }}
-              transition={{ type: "spring", damping: 14, stiffness: 180 }}
-              className="absolute left-0 flex items-center"
-              style={{ top: TOPS[i], height: CARD_H }}
-            >
-              <span className="z-10 h-[50px] w-[50px] shrink-0 rounded-full border-[6px] border-ink bg-gold" />
-              <div
-                className={cx(
-                  "ml-6 flex w-[540px] flex-col justify-center rounded-2xl border-4 border-ink px-6 shadow-hard",
-                  i === t.events.length - 1 ? "bg-ink text-gold" : "bg-paper",
-                )}
-                style={{ height: CARD_H }}
-              >
-                <div className="font-mono text-[30px] font-bold">{e.time}</div>
-                <div className="text-[52px] font-extrabold leading-tight">
-                  {e.emoji} {e.label}
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <motion.div
+          key={e.label}
+          initial={{ x: 120, opacity: 0, rotate: 3 }}
+          animate={{ x: 0, opacity: 1, rotate: 0 }}
+          transition={{ delay: at(i), type: "spring", damping: 14, stiffness: 180 }}
+          className="absolute left-0 flex items-center"
+          style={{ top: TOPS[i], height: CARD_H }}
+        >
+          <span className="z-10 h-[50px] w-[50px] shrink-0 rounded-full border-[6px] border-ink bg-gold" />
+          <div
+            className={cx(
+              "ml-6 flex w-[540px] flex-col justify-center rounded-2xl border-4 border-ink px-6 shadow-hard",
+              i === t.events.length - 1 ? "bg-ink text-gold" : "bg-paper",
+            )}
+            style={{ height: CARD_H }}
+          >
+            <div className="font-mono text-[30px] font-bold">{e.time}</div>
+            <div className="text-[52px] font-extrabold leading-tight">
+              {e.emoji} {e.label}
+            </div>
+          </div>
+        </motion.div>
       ))}
 
       {/* the red bracket between the quiz and the midterm */}

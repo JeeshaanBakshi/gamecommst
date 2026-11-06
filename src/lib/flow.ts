@@ -137,20 +137,20 @@ export const Q = {
     correct: 2,
     explain: "400 mg, about three cups of brewed coffee. Two big coffees and an energy drink gets you there fast.",
   },
-  quiz_gap: {
-    key: "quiz_gap",
+  quiz_phone: {
+    key: "quiz_phone",
     kind: "choice",
-    prompt: "How much time did Jeeshaan have between the MATH 137 quiz and the CS 135 midterm?",
+    prompt: "Where should your phone be while you study, so you focus best?",
     short: "Quiz",
     options: [
-      { label: "2 hours", emoji: "😌" },
-      { label: "1 hour", emoji: "🙂" },
-      { label: "40 minutes", emoji: "😵" },
-      { label: "What gap?", emoji: "💀" },
+      { label: "Face-down on your desk", emoji: "🙃" },
+      { label: "On silent in your pocket", emoji: "🤫" },
+      { label: "In another room", emoji: "🚪" },
+      { label: "In your hand, \"just in case\"", emoji: "🤳" },
     ],
     bad: [],
     correct: 2,
-    explain: "40 minutes. That's not a break, that's a pit stop.",
+    explain: "In another room. In a UT Austin study, people did worse with their phone on the desk, even face-down and on silent. Out of sight = more brainpower.",
   },
   quiz_genetics: {
     key: "quiz_genetics",
@@ -240,9 +240,9 @@ export const SCREENS: Screen[] = [
   ask(TALKS.eating, Q.meals),
   ask(TALKS.eating, Q.quiz_caffeine),
 
-  // Jeeshaan's section follows his speech: TIME → timeline → chain → the fix → gap quiz → study vs scroll.
+  // Jeeshaan's section follows his speech: TIME → timeline → chain → the fix → phone quiz → study vs scroll.
   ...talk(TALKS.courseload, "s4"),
-  ask(TALKS.courseload, Q.quiz_gap),
+  ask(TALKS.courseload, Q.quiz_phone),
   { type: "double", id: "q-study-scroll", section: TALKS.courseload.section, qs: [Q.study, Q.scroll] },
 
   ...talk(TALKS.bald, "s5"),

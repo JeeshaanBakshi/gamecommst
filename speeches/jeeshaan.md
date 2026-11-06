@@ -1,6 +1,6 @@
 # Managing Courseload: Jeeshaan
 
-`(click)` = press → / the clicker. On the timeline slide each click reveals the next item.
+`(click)` = press → / the clicker. Every slide takes at most 2 clicks.
 
 ---
 
@@ -12,12 +12,14 @@ I'm here for the last thing you've got left: your time.
 
 ## [SLIDE 1: One real day]
 
+*(The three times slide in by themselves, about a second apart. Talk over them.)*
+
 Let me show you one real day of my life. Actually… it's today.
 
-(click) 9 AM: this presentation. Hi, guys.
-(click) 5:30: MATH 137 quiz. Okay. Still fine.
-(click) 7 PM: CS 135 midterm.
-(click) And between them? Forty minutes.
+9 AM: this presentation. Hi, guys.
+5:30: MATH 137 quiz. Okay. Still fine.
+7 PM: CS 135 midterm.
+(click) And between them? Forty minutes. *(the red "40 min" bracket appears)*
 
 *(pause)*
 
@@ -47,11 +49,11 @@ Fix three: phone away. Not face-down. Not on silent. Away. Face-down isn't away;
 Three habits. All free. No supplements, no hair transplant, no money needed.
 Now, let's see who was actually listening… and who was doomscrolling.
 
-## [QUIZ 1: the 40-minute gap]
+## [QUIZ 1: Where should your phone be?]
 
 *(It reveals by itself when time runs out or everyone has answered.)*
 
-(after reveal) Forty minutes. If you got that wrong, you were probably on your phone. Which brings us to…
+(after reveal) In another room. Face-down isn't away, it's just your phone hiding. If you got that wrong, you were probably on your phone. Which brings us to…
 
 ## [QUIZ 2: Study vs Scroll]
 
