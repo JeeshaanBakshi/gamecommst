@@ -10,10 +10,14 @@ export function isLocalMachine() {
  * Vercel's long per-deployment URLs sit behind a Vercel login, so on Vercel we always
  * point phones at the project's public production domain, whatever URL the host is on.
  */
+/** The live site. Change this if the Vercel project gets a different domain. */
+export const PUBLIC_SITE = "https://gamecommst-xagg.vercel.app";
+
 export function publicSiteUrl() {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL;
   const production = process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL;
-  const base = explicit || (production ? `https://${production}` : window.location.origin);
+  const onVercel = window.location.hostname.endsWith(".vercel.app");
+  const base = explicit || (production ? `https://${production}` : onVercel ? PUBLIC_SITE : window.location.origin);
   return base.replace(/\/$/, "");
 }
 
