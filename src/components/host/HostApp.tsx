@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useHostGame } from "@/hooks/useHostGame";
 import { burst } from "@/lib/confetti";
 import { serverNow } from "@/lib/clock";
+import { publicSiteUrl } from "@/lib/env";
 import { isQuiz, QUIZ_MS, SCREENS, type Screen } from "@/lib/flow";
 import { sfx } from "@/lib/sound";
 import { CONTROLS_H, HostControls } from "./HostControls";
@@ -116,8 +117,7 @@ export function HostApp() {
   if (!room || !state) return <Fullscreen msg="Setting up the room…" />;
 
   const screen = SCREENS[state.screen] ?? SCREENS[0];
-  const base = (process.env.NEXT_PUBLIC_SITE_URL || window.location.origin).replace(/\/$/, "");
-  const joinUrl = `${base}/play?room=${room.code}`;
+  const joinUrl = `${publicSiteUrl()}/play?room=${room.code}`;
 
   return (
     <>
