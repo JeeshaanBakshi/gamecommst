@@ -5,9 +5,9 @@ export type QuestionKey =
   | "study"
   | "scroll"
   | "family"
-  | "quiz_shed"
+  | "quiz_math135"
   | "quiz_sleep"
-  | "quiz_iron"
+  | "quiz_caffeine"
   | "quiz_genetics"
   | "quiz_cortisol";
 

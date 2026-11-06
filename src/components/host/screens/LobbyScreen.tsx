@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { QRCodeSVG } from "qrcode.react";
+import { isLocalMachine, SUPABASE_SETUP_HINT } from "@/lib/env";
 import type { Player } from "@/lib/types";
 import { Card, Scribble, Sticker } from "../../ui";
 
@@ -54,7 +55,9 @@ export function LobbyScreen({ code, joinUrl, players, onKick, localMode }: Props
         </div>
         {localMode && (
           <p className="mt-6 text-center font-mono text-lg font-bold text-pen">
-            LOCAL MODE: Supabase isn&apos;t configured, so only tabs in this browser can join.
+            {isLocalMachine()
+              ? "LOCAL MODE: Supabase isn't configured, so only tabs in this browser can join."
+              : `⚠ NOT CONNECTED TO SUPABASE. Phones can't join. ${SUPABASE_SETUP_HINT}`}
           </p>
         )}
       </Card>

@@ -11,15 +11,15 @@ Built with Next.js (App Router), TypeScript, Tailwind, Supabase (Postgres + Real
 
 ## The presentation
 
-Each section works the same way: **the speaker's slides → a poll → a quiz.** While someone is presenting, every phone shows *"👀 Look up! Jacob is speaking about eating habits. Pay attention if you don't wanna go bald."*
+It opens with a wall of everyone's bald WatCards. After that, each section works the same way: **the speaker's slides → a poll → a quiz.** While someone is presenting, every phone shows **that speaker's photo** with *"Pay attention if you don't wanna go bald."*
 
 | # | Speaker | Slides | Then the audience answers |
 |---|---------|--------|---------------------------|
-| 1 | Gurshaan | What is the Waterloo Effect? · Why stress hits your hair | How stressed are you? (1–5) → Quiz: when does stress shedding start? |
-| 2 | Austin | Sleep deprivation · The all-nighter math | Hours of sleep → Quiz: how much sleep do adults need? |
-| 3 | Jacob | Eating habits · Hair-friendly fuel | Meals skipped per week → Quiz: classic cause of shedding? |
+| 1 | Gurshaan | Bald WatCard wall · What is the Waterloo Effect? · Why it hits home | How stressed are you? (1–5) → Quiz: which midterm sent the viral "you matter more than your grades" email? |
+| 2 | Austin | Sleep deprivation · No sleep → cortisol → hair · The fix | Hours of sleep → Quiz: how much sleep do adults need? |
+| 3 | Jacob | Stress eating · 400 mg · Feed your hair | Meals skipped per week → Quiz: Health Canada's daily caffeine limit? |
 | 4 | Jeeshaan | Managing courseload · How to manage it | Study vs doomscroll hours → Quiz: which hormone is the "stress hormone"? |
-| 5 | Gurshaan | How not to go bald · The prescription | Baldness in the family? → Quiz: #1 cause of permanent hair loss? → **Closest to Bald** finale |
+| 5 | Emmanuel | SH***WER · Hair care 101 · Massage, LeBron, and your parents | Baldness in the family? → Quiz: #1 cause of permanent hair loss? → **Closest to Bald** finale |
 
 Every answer is a single tap.
 
@@ -29,6 +29,8 @@ Every answer is a single tap.
 ### Editing the content
 
 - **Slides:** [`src/lib/slides.ts`](src/lib/slides.ts). Change any text, or add a third slide by adding another `{ title, emoji, bullets }` to a speaker's `slides` list.
+- **Speaker photos (shown on phones):** `SPEAKER_PHOTOS` in the same file. To add one, put the image in `public/speakers/` (for example `public/speakers/jeeshaan.jpg`) and set `Jeeshaan: "/speakers/jeeshaan.jpg"`. Anyone without a photo gets a microphone instead.
+- **Bald wall:** the images are in `public/bald/` and the list is `BALD_WALL` in `slides.ts`.
 - **Polls and quizzes:** `Q` in [`src/lib/flow.ts`](src/lib/flow.ts). The screen order is `SCREENS` in the same file.
 
 ### Bald score (the finale)
@@ -72,6 +74,10 @@ Open <http://localhost:3000/host>. Without Supabase values the app still runs in
 2. Add the environment variables `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
 3. Deploy, then open `https://<your-app>.vercel.app/host` on the projector laptop. The QR code automatically points phones at the deployed site.
 
+> **Added or changed the environment variables after deploying?** Vercel only reads them when it builds, so go to **Deployments → ⋯ → Redeploy**. If they're missing, the lobby shows a red "NOT CONNECTED TO SUPABASE" warning and phones show "Game not connected yet".
+
+Free-tier notes: Supabase pauses projects after about a week with no activity. Open the Supabase dashboard the day before you present to make sure it's awake. Everything else easily fits within the free tiers for a class of 60.
+
 ---
 
 ## On presentation day
@@ -89,8 +95,9 @@ Open <http://localhost:3000/host>. Without Supabase values the app still runs in
 | `L` | Lock / unlock answers |
 | `M` | Mute / unmute sounds |
 | `F` | Fullscreen |
+| `H` | Hide / show the control bar |
 
-Presentation clickers send PageUp/PageDown, so they work out of the box. Moving the mouse shows a small control bar (it hides itself after 2.5 seconds). It has the same buttons, a dropdown to jump to any screen, and **Reset room**, which removes all players and answers and sends every phone back to the join screen. Use it after a practice run.
+Presentation clickers send PageUp/PageDown, so they work out of the box. The control bar sits in its own strip **below** the slide, so it never covers any text or images. Press **H** to hide or show it (the slide still fits either way). It has the same buttons, a dropdown to jump to any screen, and **Reset room**, which removes all players and answers and sends every phone back to the join screen. Use it after a practice run.
 
 The host remembers its room, so refreshing `/host` keeps the same code and players. Phones that refresh or briefly lose Wi-Fi rejoin as the same player automatically, and people who join late land on the current screen.
 

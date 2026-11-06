@@ -1,20 +1,45 @@
 /**
- * Talk slides — one block per speaker. Edit the text freely.
- * Add a third slide by adding another object to a `slides` array.
- * While these are on the projector, every phone shows
- * "<speaker> is speaking — pay attention if you don't wanna go bald".
+ * Talk slides — one block per speaker, written from each person's script in the group doc.
+ * Edit the text freely. Add a slide by adding another object to a `slides` array.
+ * While these are on the projector, every phone shows the speaker's photo
+ * (or a mic if they have none) — "pay attention if you don't wanna go bald".
  */
 
 export interface SlideDef {
   title: string;
   bullets: string[];
   emoji: string;
+  /** Picture shown instead of the emoji (put it in /public/slides/). */
+  image?: string;
+  /** Show the wall of bald WatCards instead of bullets. */
+  wall?: boolean;
+  /** Emmanuel's "SH***WER" slide: WATERLOO crossed out in a stink cloud. */
+  shower?: boolean;
 }
+
+/**
+ * Photo shown on everyone's phone while that person presents.
+ * To add one: put the image in /public/speakers/ and set the path, e.g. "/speakers/jeeshaan.jpg".
+ */
+export const SPEAKER_PHOTOS: Record<string, string | undefined> = {
+  Gurshaan: "/bald/watcard-gurshaan.jpg",
+  Austin: "/bald/watcard-austin.jpg",
+  Jacob: undefined,
+  Jeeshaan: "/bald/watcard-jeeshaan.jpg",
+  Emmanuel: "/bald/watcard-emmanuel.jpg",
+};
+
+/** The opening slide: every bald WatCard except the presenters'. */
+export const BALD_WALL = [
+  "alexis", "yashari", "audrik", "udai", "jessie", "prathiksha", "milia",
+  "daniel", "yuvraj", "micheal", "tim", "paria", "arman",
+  "tianyu", "richard", "raza", "kevin", "victor", "fan", "joshua",
+].map((n) => `/bald/watcard-${n}.jpg`);
 
 export interface TalkDef {
   num: string;
   section: string;
-  /** Short topic for phones: "Gurshaan is speaking about <topic>". */
+  /** Short topic for phones: "Gurshaan is up, talking about <topic>". */
   topic: string;
   speaker: string;
   slides: SlideDef[];
@@ -27,22 +52,23 @@ export const TALKS = {
     topic: "the Waterloo Effect",
     speaker: "Gurshaan",
     slides: [
+      { title: "The Waterloo Effect", emoji: "🪿", bullets: [], wall: true },
       {
         title: "What is the Waterloo Effect?",
-        emoji: "🪿",
+        emoji: "🪪",
         bullets: [
-          "Big stress pushes lots of hair follicles into “resting” mode at once",
-          "About 2–3 months later, they all shed together (telogen effluvium)",
-          "Midterm stress in October → hair in your drain by finals",
+          "The WatCard “before and after” transformation meme",
+          "Started on campus meme pages, then went viral, even at US schools and in high schools",
+          "It even made it onto r/OntarioGrade12s",
         ],
       },
       {
-        title: "Why stress hits your hair",
-        emoji: "🧪",
+        title: "Why it hits home",
+        emoji: "📉",
         bullets: [
-          "Stress hormones like cortisol disrupt the hair growth cycle",
-          "Normally ~85–90% of your hairs are in the growing phase",
-          "Good news: stress shedding is usually temporary",
+          "University is a lot harder than high school",
+          "After the MATH 135 midterm, students got an email: you matter more than your grades",
+          "Today: how to avoid becoming the next victim",
         ],
       },
     ],
@@ -57,18 +83,28 @@ export const TALKS = {
         title: "Sleep deprivation",
         emoji: "🌙",
         bullets: [
-          "Adults need 7+ hours of sleep a night",
-          "Short sleep ramps up your stress hormones",
-          "Deep sleep is when your body does most of its repair work",
+          "You're supposed to get 7 to 9 hours a night",
+          "Most of us get 5, maybe 6 if we're lucky",
+          "Your brain saves what you learned while you sleep, so all-nighters = remember less",
         ],
       },
       {
-        title: "The all-nighter math",
-        emoji: "🧟",
+        title: "No sleep → cortisol → hair",
+        emoji: "😰",
+        image: "/slides/cortisol.jpg",
         bullets: [
-          "~17–19 hours awake ≈ reaction time of a 0.05% blood alcohol level",
-          "Sleep is when memories get locked in. Cramming at 3am backfires",
-          "Less sleep → more stress → sadder hairline",
+          "~18 hours awake ≈ the focus of a 0.05 blood alcohol level",
+          "Less sleep = more cortisol, your stress hormone",
+          "Hair goes into its resting phase and falls out 2–3 months later",
+        ],
+      },
+      {
+        title: "The fix",
+        emoji: "😴",
+        bullets: [
+          "Aim for at least 7 hours",
+          "Put your phone down 30 minutes before bed",
+          "Stop cramming all night. Your hairline is begging you",
         ],
       },
     ],
@@ -80,21 +116,30 @@ export const TALKS = {
     speaker: "Jacob",
     slides: [
       {
-        title: "Eating habits",
+        title: "Stress eating",
         emoji: "🍜",
         bullets: [
-          "Hair is made of a protein called keratin",
-          "Low protein, low iron and crash dieting can all trigger shedding",
-          "Skipping meals + 3 coffees is not a nutrition plan",
+          "Stress raises cortisol, which drives cravings for sugary and salty food",
+          "In one study of students during exams, half skipped more meals",
+          "Skip, binge, repeat",
         ],
       },
       {
-        title: "Hair-friendly fuel",
+        title: "400 mg",
+        emoji: "☕",
+        bullets: [
+          "Health Canada: no more than 400 mg of caffeine a day for adults",
+          "Filter coffee ≈ 100–140 mg · energy drink ≈ 50–180 mg",
+          "Add up what you had yesterday. Over 400? Raise your hand",
+        ],
+      },
+      {
+        title: "Feed your hair",
         emoji: "🥚",
         bullets: [
-          "Protein: eggs, beans, chicken, tofu, Greek yogurt",
-          "Iron: leafy greens, lentils, red meat",
-          "Eat breakfast. An iced capp is not breakfast",
+          "Iron, protein, zinc and vitamin D",
+          "Cheap fixes: eggs, canned fish, beans, Greek yogurt, peanut butter",
+          "Crack an egg or toss frozen veggies into your instant noodles",
         ],
       },
     ],
@@ -109,9 +154,9 @@ export const TALKS = {
         title: "Managing courseload",
         emoji: "📚",
         bullets: [
+          "A “perfect” day: 1 presentation, 1 quiz, and a midterm right after",
           "5 courses + co-op apps + clubs = chronic stress",
           "Chronic stress keeps cortisol up for weeks, not hours",
-          "Doomscrolling feels like a break, but it isn't rest",
         ],
       },
       {
@@ -129,25 +174,25 @@ export const TALKS = {
     num: "05",
     section: "5 · How Not to Go Bald",
     topic: "how not to go bald",
-    speaker: "Gurshaan",
+    speaker: "Emmanuel",
     slides: [
+      { title: "SH***WER", emoji: "🚿", bullets: [], shower: true },
       {
-        title: "How not to go bald",
-        emoji: "🧬",
+        title: "Hair care 101",
+        emoji: "🚿",
         bullets: [
-          "Genetics (androgenetic alopecia) is the #1 cause of permanent hair loss",
-          "Stress shedding usually grows back in a few months",
-          "Shedding for months? See a doctor or dermatologist",
+          "Cool or cold water on your head, not hot",
+          "Avoid heat: blow dryers, curling irons, straighteners. Use heat protectant",
+          "Don't touch or style your hair while it's wet",
         ],
       },
       {
-        title: "The prescription",
-        emoji: "🩺",
+        title: "Massage, LeBron, and your parents",
+        emoji: "💆",
         bullets: [
-          "😴 Sleep 7+ hours",
-          "🍳 Eat real meals with protein + iron",
-          "🚶 Move, touch grass, take actual breaks",
-          "🧘 Plan the term, and talk to someone when it's a lot",
+          "Massage your scalp with an oil that suits your hair type",
+          "Worst case: the LeBron route (hair transplant)",
+          "It's mostly genetics. Blame your parents, not Waterloo",
         ],
       },
     ],

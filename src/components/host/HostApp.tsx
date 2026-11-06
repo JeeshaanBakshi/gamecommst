@@ -7,7 +7,7 @@ import { burst } from "@/lib/confetti";
 import { serverNow } from "@/lib/clock";
 import { isQuiz, QUIZ_MS, SCREENS, type Screen } from "@/lib/flow";
 import { sfx } from "@/lib/sound";
-import { HostControls } from "./HostControls";
+import { CONTROLS_H, HostControls } from "./HostControls";
 import { Stage } from "./Stage";
 import { TopBar } from "./TopBar";
 import { FinaleScreen } from "./screens/FinaleScreen";
@@ -19,6 +19,7 @@ import { TalkScreen } from "./screens/TalkScreen";
 export function HostApp() {
   const { room, state, players, answers, status, error, actions, backend } = useHostGame({ onJoin: () => sfx.join(), onAnswer: () => sfx.pop() });
   const [muted, setMuted] = useState(sfx.muted);
+  const [showBar, setShowBar] = useState(true);
 
   const toggleMute = () => {
     sfx.setMuted(!sfx.muted);
@@ -48,6 +49,7 @@ export function HostApp() {
       } else if (k === "r") actions.reveal();
       else if (k === "l") actions.toggleLock();
       else if (k === "m") toggleMute();
+      else if (k === "h") setShowBar((b) => !b);
       else if (k === "f") {
         if (document.fullscreenElement) void document.exitFullscreen();
         else void document.documentElement.requestFullscreen?.().catch(() => {});
@@ -99,7 +101,13 @@ export function HostApp() {
     return () => clearTimeout(t);
   }, [quizKey, revealed, startedAt, quizAnswered, players.length, actions]);
 
-  if (error && !room) return <Fullscreen msg={`Couldn't start the room: ${error}`} />;
+  if (error && !room)
+    return (
+      <Fullscreen
+        msg={`Couldn't start the room: ${error}`}
+        hint="Check that supabase/schema.sql was run in the Supabase SQL Editor and that the two NEXT_PUBLIC_SUPABASE_* environment variables are set."
+      />
+    );
   if (!room || !state) return <Fullscreen msg="Setting up the room…" />;
 
   const screen = SCREENS[state.screen] ?? SCREENS[0];
@@ -108,8 +116,10 @@ export function HostApp() {
 
   return (
     <>
-      <Stage>
-        {screen.type !== "lobby" && <TopBar screen={screen} code={room.code} playerCount={players.length} status={status} />}
+      <Stage bottom={showBar ? CONTROLS_H : 0}>
+        {screen.type !== "lobby" && !(screen.type === "talk" && screen.wall) && (
+          <TopBar screen={screen} code={room.code} playerCount={players.length} status={status} />
+        )}
         <AnimatePresence mode="wait">
           <motion.div
             key={screen.id}
@@ -123,6 +133,7 @@ export function HostApp() {
           </motion.div>
         </AnimatePresence>
       </Stage>
+      {showBar && (
       <HostControls
         state={state}
         muted={muted}
@@ -133,7 +144,9 @@ export function HostApp() {
         onMute={toggleMute}
         onReset={confirmReset}
         onJump={actions.goTo}
+        onHide={() => setShowBar(false)}
       />
+      )}
     </>
   );
 
@@ -153,10 +166,13 @@ export function HostApp() {
   }
 }
 
-function Fullscreen({ msg }: { msg: string }) {
+function Fullscreen({ msg, hint }: { msg: string; hint?: string }) {
   return (
     <div className="bg-grid fixed inset-0 grid place-items-center p-10 text-center">
-      <div className="text-5xl font-extrabold">{msg}</div>
+      <div>
+        <div className="text-5xl font-extrabold">{msg}</div>
+        {hint && <p className="mx-auto mt-6 max-w-3xl font-mono text-xl font-bold">{hint}</p>}
+      </div>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useCallback } from "react";
 import { usePlayerGame } from "@/hooks/usePlayerGame";
 import { serverNow } from "@/lib/clock";
+import { isLocalMachine } from "@/lib/env";
 import { SCREENS, type Screen } from "@/lib/flow";
 import type { AnswerValue, QuestionKey } from "@/lib/types";
 import { ChoiceList, ChoiceQuestion, SliderQuestion, Status } from "./Answering";
@@ -19,6 +20,15 @@ export function PlayApp() {
   const { phase, room, state, player, mine, status, notice, backend } = g;
   const answer = g.answer;
   const save = useCallback((k: QuestionKey, v: AnswerValue) => void answer(k, v), [answer]);
+
+  // Deployed without Supabase keys: phones can't reach the host, so say so plainly.
+  if (backend.mode === "local" && !isLocalMachine()) {
+    return (
+      <Shell>
+        <Waiting emoji="🔌" title="Game not connected yet" sub="Tell the presenter: Supabase keys are missing on Vercel" />
+      </Shell>
+    );
+  }
 
   if (phase === "loading") {
     return (

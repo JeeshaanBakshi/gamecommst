@@ -1,8 +1,6 @@
 -- The Waterloo Effect: How Not to Go Bald
 -- Paste this whole file into Supabase → SQL Editor → Run. Safe to re-run.
 
-create extension if not exists pgcrypto;
-
 -- ---------- tables ----------
 
 create table if not exists public.rooms (
@@ -56,6 +54,10 @@ grant execute on function public.server_now() to anon, authenticated;
 -- ---------- row level security ----------
 -- This is a no-login classroom game, so the anon key may read/write game tables.
 -- Rooms are only discoverable by their 4-letter code. Don't store anything sensitive here.
+
+-- Explicit grants, in case this project doesn't auto-expose new tables to the API.
+grant usage on schema public to anon, authenticated;
+grant select, insert, update, delete on public.rooms, public.game_state, public.players, public.answers to anon, authenticated;
 
 alter table public.rooms      enable row level security;
 alter table public.game_state enable row level security;

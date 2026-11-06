@@ -1,4 +1,4 @@
-import { TALKS, type TalkDef } from "./slides";
+import { SPEAKER_PHOTOS, TALKS, type TalkDef } from "./slides";
 import type { QuestionKey } from "./types";
 
 /** Quizzes auto-reveal after this long (or as soon as everyone has answered). */
@@ -92,20 +92,20 @@ export const Q = {
   },
 
   /* ---- quizzes (right/wrong, 15s timer) ---- */
-  quiz_shed: {
-    key: "quiz_shed",
+  quiz_math135: {
+    key: "quiz_math135",
     kind: "choice",
-    prompt: "How long after a big stressful event does stress shedding usually start?",
+    prompt: "After which midterm did students get the viral \"you matter more than your grades\" email?",
     short: "Quiz",
     options: [
-      { label: "2–3 days", emoji: "⚡" },
-      { label: "2–3 weeks", emoji: "📅" },
-      { label: "2–3 months", emoji: "🗓️" },
-      { label: "2–3 years", emoji: "⏳" },
+      { label: "CS 135", emoji: "💻" },
+      { label: "MATH 135", emoji: "🧮" },
+      { label: "ECON 101", emoji: "📈" },
+      { label: "PHYS 121", emoji: "🍎" },
     ],
     bad: [],
-    correct: 2,
-    explain: "Follicles go into resting mode, then shed 2–3 months later. Midterm stress shows up around finals.",
+    correct: 1,
+    explain: "MATH 135. When the math department starts sending wellness emails, the Waterloo Effect is real.",
   },
   quiz_sleep: {
     key: "quiz_sleep",
@@ -122,20 +122,20 @@ export const Q = {
     correct: 2,
     explain: "7+ hours for adults. Look at the last chart: most of this room isn't getting it.",
   },
-  quiz_iron: {
-    key: "quiz_iron",
+  quiz_caffeine: {
+    key: "quiz_caffeine",
     kind: "choice",
-    prompt: "Which of these is a classic cause of hair shedding?",
+    prompt: "What's Health Canada's daily caffeine limit for healthy adults?",
     short: "Quiz",
     options: [
-      { label: "Too little caffeine", emoji: "☕" },
-      { label: "Low iron", emoji: "🥬" },
-      { label: "Too little sugar", emoji: "🍬" },
-      { label: "Too much water", emoji: "💧" },
+      { label: "100 mg", emoji: "🍵" },
+      { label: "200 mg", emoji: "☕" },
+      { label: "400 mg", emoji: "☕☕☕" },
+      { label: "800 mg", emoji: "⚡" },
     ],
     bad: [],
-    correct: 1,
-    explain: "Low iron (and low protein) are well-known shedding triggers. Caffeine is not a vitamin.",
+    correct: 2,
+    explain: "400 mg, about three cups of brewed coffee. Two big coffees and an energy drink gets you there fast.",
   },
   quiz_cortisol: {
     key: "quiz_cortisol",
@@ -181,6 +181,14 @@ export type Screen =
       title: string;
       bullets: string[];
       emoji: string;
+      /** Bald WatCard wall instead of bullets. */
+      wall?: boolean;
+      /** Emmanuel's SH***WER slide. */
+      shower?: boolean;
+      /** Picture shown instead of the emoji. */
+      image?: string;
+      /** Speaker's photo for the phones. */
+      photo?: string;
       part: number;
       of: number;
     }
@@ -199,6 +207,10 @@ function talk(t: TalkDef, id: string): Screen[] {
     title: s.title,
     bullets: s.bullets,
     emoji: s.emoji,
+    wall: "wall" in s ? s.wall : undefined,
+    shower: "shower" in s ? s.shower : undefined,
+    image: "image" in s ? s.image : undefined,
+    photo: SPEAKER_PHOTOS[t.speaker],
     part: i + 1,
     of: t.slides.length,
   }));
@@ -212,7 +224,7 @@ export const SCREENS: Screen[] = [
 
   ...talk(TALKS.waterloo, "s1"),
   ask(TALKS.waterloo, Q.stress),
-  ask(TALKS.waterloo, Q.quiz_shed),
+  ask(TALKS.waterloo, Q.quiz_math135),
 
   ...talk(TALKS.sleep, "s2"),
   ask(TALKS.sleep, Q.sleep),
@@ -220,7 +232,7 @@ export const SCREENS: Screen[] = [
 
   ...talk(TALKS.eating, "s3"),
   ask(TALKS.eating, Q.meals),
-  ask(TALKS.eating, Q.quiz_iron),
+  ask(TALKS.eating, Q.quiz_caffeine),
 
   ...talk(TALKS.courseload, "s4"),
   { type: "double", id: "q-study-scroll", section: TALKS.courseload.section, qs: [Q.study, Q.scroll] },
