@@ -1,6 +1,6 @@
 "use client";
 
-import { SCREENS } from "@/lib/flow";
+import { SCREENS, screenKeys } from "@/lib/flow";
 import type { GameState } from "@/lib/types";
 import { cx } from "../ui";
 
@@ -16,6 +16,7 @@ interface Props {
   onLock: () => void;
   onMute: () => void;
   onReset: () => void;
+  onRedo: () => void;
   onJump: (i: number) => void;
   onHide: () => void;
 }
@@ -47,6 +48,14 @@ export function HostControls(p: Props) {
       <button className={cx(btn, on(p.state.revealed))} onClick={p.onReveal} title="Reveal (R)">Reveal</button>
       <button className={cx(btn, on(p.state.locked))} onClick={p.onLock} title="Lock (L)">{p.state.locked ? "🔒" : "🔓"}</button>
       <button className={cx(btn, on(false))} onClick={p.onMute} title="Mute (M)">{p.muted ? "🔇" : "🔊"}</button>
+      <button
+        className={cx(btn, on(false), "disabled:cursor-not-allowed disabled:opacity-40")}
+        onClick={p.onRedo}
+        disabled={screenKeys(SCREENS[p.state.screen]).length === 0}
+        title="Clear this question's answers and run it again"
+      >
+        ↺ Redo
+      </button>
       <button className={cx(btn, on(false))} onClick={p.onReset} title="Remove all players and answers">Reset room</button>
       <button className={cx(btn, on(false))} onClick={p.onHide} title="Hide this bar (H)">Hide bar · H</button>
     </div>

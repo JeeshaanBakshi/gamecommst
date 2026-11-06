@@ -83,6 +83,10 @@ export function createSupabaseBackend(url: string, key: string): Backend {
       }
     },
 
+    async deleteAnswers(roomId, questions) {
+      must(await sb.from("answers").delete().eq("room_id", roomId).in("question", questions));
+    },
+
     async resetRoom(roomId, next) {
       // Bump epoch first so phones bail out immediately, then clean up.
       must(await sb.from("game_state").update({ ...FRESH, ...next, updated_at: new Date().toISOString() }).eq("room_id", roomId));

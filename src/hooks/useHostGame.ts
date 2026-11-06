@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getBackend } from "@/lib/backend";
 import { serverNow, syncClock } from "@/lib/clock";
-import { isQuiz, isRevealable, SCREENS } from "@/lib/flow";
+import { isQuiz, isRevealable, SCREENS, screenKeys } from "@/lib/flow";
 import { indexAnswers, type Answer, type AnswerIndex, type ConnStatus, type GameState, type Player, type Room } from "@/lib/types";
 import { roomCode } from "@/lib/uid";
 
@@ -187,9 +187,32 @@ export function useHostGame(events: Events = {}) {
     [backend],
   );
 
+  /**
+   * Redo the current question / quiz / Focus Challenge: clear its answers, then restart it.
+   * The new started_at is the signal phones use to drop their old answer and let people answer again.
+   */
+  const redo = useCallback(async () => {
+    const s = stateRef.current;
+    if (!s || !room) return;
+    const scr = SCREENS[s.screen];
+    const keys = screenKeys(scr);
+    if (!keys.length) return;
+    await backend.deleteAnswers(room.id, keys);
+    setAnswers((prev) => {
+      const next = { ...prev };
+      keys.forEach((k) => delete next[k]);
+      return next;
+    });
+    write({
+      revealed: false,
+      locked: false,
+      started_at: scr.type === "focus" ? null : new Date(serverNow()).toISOString(),
+    });
+  }, [backend, room, write]);
+
   const actions = useMemo(
-    () => ({ next, prev, goTo, reveal, toggleLock, reset, kick }),
-    [next, prev, goTo, reveal, toggleLock, reset, kick],
+    () => ({ next, prev, goTo, reveal, toggleLock, reset, kick, redo }),
+    [next, prev, goTo, reveal, toggleLock, reset, kick, redo],
   );
 
   return {

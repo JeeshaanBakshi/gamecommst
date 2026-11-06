@@ -39,6 +39,18 @@ export function FocusChallenge({ startedAt, revealed, saved, onUpdate }: Props) 
   const [toast, setToast] = useState<(typeof NOTIFICATIONS)[number] & { id: number } | null>(null);
   const [progress, setProgress] = useState(0);
 
+  // Host pressed Redo: my saved result was cleared, so go back to the hold button.
+  const [prevSaved, setPrevSaved] = useState(saved);
+  if (saved !== prevSaved) {
+    setPrevSaved(saved);
+    if (!saved && (phase === "failed" || phase === "done")) {
+      setPhase("ready");
+      setHeldMs(0);
+      setReason(null);
+      setProgress(0);
+    }
+  }
+
   const phaseRef = useRef<Phase>(initial);
   const startRef = useRef(0);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);

@@ -30,6 +30,12 @@ export function HostApp() {
     setMuted(sfx.muted);
   };
 
+  const confirmRedo = () => {
+    if (window.confirm("Redo this question? Everyone's answers to it will be cleared and they can answer again.")) {
+      void actions.redo();
+    }
+  };
+
   const confirmReset = () => {
     if (window.confirm("Reset the room? This removes every player and answer and sends phones back to the join screen.")) {
       void actions.reset();
@@ -183,6 +189,7 @@ export function HostApp() {
         onLock={actions.toggleLock}
         onMute={toggleMute}
         onReset={confirmReset}
+        onRedo={confirmRedo}
         onJump={actions.goTo}
         onHide={() => setShowBar(false)}
       />

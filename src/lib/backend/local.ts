@@ -133,6 +133,12 @@ export function createLocalBackend(): Backend {
       rows.forEach((row) => emit({ kind: "answer", row }));
     },
 
+    async deleteAnswers(roomId, questions) {
+      for (const { key, row } of scan<Answer>(`${P}answer:`)) {
+        if (row.room_id === roomId && questions.includes(row.question)) del(key);
+      }
+    },
+
     async resetRoom(roomId, next) {
       for (const { key, row } of scan<Player>(`${P}player:`)) {
         if (row.room_id !== roomId) continue;

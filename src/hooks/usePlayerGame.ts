@@ -62,8 +62,16 @@ export function usePlayerGame() {
       setState(s);
       const p = playerRef.current;
       if (p && s.epoch !== p.epoch) kickToJoin("The host reset the room. Jump back in!");
+      // Same screen but a new round (host pressed Redo / started a round): re-sync my answers
+      // so cleared ones disappear and I can answer again.
+      else if (p && cur && cur.screen === s.screen && cur.started_at !== s.started_at) {
+        void backend
+          .listPlayerAnswers(p.id)
+          .then((as) => setMine(Object.fromEntries(as.map((a) => [a.question, a.value]))))
+          .catch(() => {});
+      }
     },
-    [kickToJoin],
+    [kickToJoin, backend],
   );
 
   /* ---- figure out which room ---- */

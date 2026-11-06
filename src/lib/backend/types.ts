@@ -1,4 +1,4 @@
-import type { Answer, ConnStatus, GameState, NewPlayer, Player, Room } from "../types";
+import type { Answer, ConnStatus, GameState, NewPlayer, Player, QuestionKey, Room } from "../types";
 
 export interface Handlers {
   onState?: (s: GameState) => void;
@@ -32,6 +32,8 @@ export interface Backend {
   listPlayerAnswers(playerId: string): Promise<Answer[]>;
   /** Throws PlayerGoneError if the player was kicked / room was reset. */
   upsertAnswers(rows: Answer[]): Promise<void>;
+  /** Clears every player's answers to these questions (the host's Redo button). */
+  deleteAnswers(roomId: string, questions: QuestionKey[]): Promise<void>;
 
   /** Wipes players + answers, sends everyone back to the lobby, bumps epoch. */
   resetRoom(roomId: string, next: Pick<GameState, "epoch" | "rev">): Promise<void>;

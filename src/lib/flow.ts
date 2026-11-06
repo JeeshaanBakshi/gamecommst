@@ -239,6 +239,14 @@ export const SCREENS: Screen[] = [
   { type: "finale", id: "finale", section: TALKS.bald.section },
 ];
 
+/** The answer keys a screen collects (what the host's Redo button clears). */
+export function screenKeys(screen: Screen): QuestionKey[] {
+  if (screen.type === "question") return [screen.q.key];
+  if (screen.type === "double") return [screen.qs[0].key, screen.qs[1].key];
+  if (screen.type === "focus") return ["focus"];
+  return [];
+}
+
 export function isRevealable(screen: Screen) {
   return screen.type === "question" || screen.type === "double";
 }
