@@ -1,7 +1,6 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { PULSE_SECONDS } from "@/lib/flow";
 import { avg } from "@/lib/scoring";
 import type { AnswerIndex } from "@/lib/types";
 import { AnimatedNumber } from "../../AnimatedNumber";
@@ -29,23 +28,9 @@ export function PulseScreen({ round, answers, playerCount, locked }: Props) {
           {after ? "Round 2 · Post-math trauma" : "Round 1 · Resting (ish)"}
         </Sticker>
         <h1 className="mt-6 text-[110px] font-extrabold leading-[0.9] tracking-tight">
-          {after ? "Check your pulse again." : "Find your pulse."}
+          {after ? "Pulse check #2." : "Pulse check."}
         </h1>
-        <ol className="mt-10 space-y-5 text-[44px] font-bold leading-tight">
-          <li>
-            <span className="mr-4 inline-grid h-16 w-16 place-items-center rounded-full bg-ink text-3xl text-gold">1</span>
-            Two fingers on your wrist, just below your thumb
-          </li>
-          <li>
-            <span className="mr-4 inline-grid h-16 w-16 place-items-center rounded-full bg-ink text-3xl text-gold">2</span>
-            Tap start on your phone, count beats for {PULSE_SECONDS}s
-          </li>
-          <li>
-            <span className="mr-4 inline-grid h-16 w-16 place-items-center rounded-full bg-ink text-3xl text-gold">3</span>
-            Type your count. We do the ×4. You&apos;re welcome.
-          </li>
-        </ol>
-        <div className="mt-12 w-[700px]">
+        <div className="mt-16 w-[700px]">
           <AnsweredMeter answered={vals.length} total={Math.max(playerCount, vals.length)} locked={locked} label="measured" />
         </div>
       </div>

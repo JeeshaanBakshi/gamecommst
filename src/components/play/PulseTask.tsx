@@ -73,11 +73,7 @@ export function PulseTask({ round, saved, before, locked, onSubmit }: Props) {
   if (step === "intro" || step === "done")
     return (
       <div className="flex flex-1 flex-col">
-        <Prompt kicker={after ? "Stress test · Pulse #2" : "Stress test · Pulse #1"}>{after ? "Measure your pulse again." : "Find your pulse."}</Prompt>
-        <div className="rounded-2xl border-[3px] border-ink bg-paper p-4 text-lg font-bold shadow-hard-sm">
-          <p>☝️✌️ Put two fingers on your wrist, just below your thumb.</p>
-          <p className="mt-2">Hit start and count every beat for {PULSE_SECONDS} seconds.</p>
-        </div>
+        <Prompt kicker={after ? "Stress test · Pulse #2" : "Stress test · Pulse #1"}>{after ? "Pulse check #2." : "Pulse check."}</Prompt>
         <div className="flex flex-1 items-center justify-center py-6">
           <motion.div animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 0.9, repeat: Infinity }} className="text-[8rem] leading-none">
             🫀
