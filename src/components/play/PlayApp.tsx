@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback } from "react";
 import { usePlayerGame } from "@/hooks/usePlayerGame";
+import { useWakeLock } from "@/hooks/useWakeLock";
 import { serverNow } from "@/lib/clock";
 import { isLocalMachine } from "@/lib/env";
 import { SCREENS, type Screen } from "@/lib/flow";
@@ -18,6 +19,7 @@ import { Waiting } from "./Waiting";
 
 export function PlayApp() {
   const g = usePlayerGame();
+  useWakeLock(g.phase === "playing");
   const { phase, room, state, player, mine, status, notice, backend } = g;
   const answer = g.answer;
   // Every answer is tagged with the current round. After the host presses Redo the round changes,

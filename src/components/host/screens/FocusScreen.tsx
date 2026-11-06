@@ -68,7 +68,15 @@ export function FocusScreen({ players, answers, startedAt, revealed }: Props) {
                   </div>
                 )}
                 <div className="mt-8 inline-block rounded-2xl border-4 border-ink bg-ink px-6 py-4 text-[44px] font-extrabold text-gold shadow-hard">
-                  🧠 Still focused: <span className="tabular-nums">{s.stillFocused}</span> / <span className="tabular-nums">{s.participants}</span> holding
+                  {startedAt ? (
+                    <>
+                      🧠 Still focused: <span className="tabular-nums">{s.stillFocused}</span> / <span className="tabular-nums">{s.participants}</span> holding
+                    </>
+                  ) : (
+                    <>
+                      🪿 <span className="tabular-nums">{n}</span> {n === 1 ? "goose" : "geese"} ready to focus
+                    </>
+                  )}
                 </div>
               </motion.div>
             )}
@@ -77,34 +85,50 @@ export function FocusScreen({ players, answers, startedAt, revealed }: Props) {
       </div>
 
       {/* right: a goose per player */}
-      <Card className="flex min-w-0 flex-1 flex-wrap content-center justify-center gap-3 overflow-hidden p-6">
-        {players.length === 0 && <div className="m-auto font-mono text-2xl font-bold">No players yet</div>}
-        {players.map((p) => {
-          const st = f[p.id]?.focus;
-          const out = st === "failed";
-          return (
-            <motion.div
-              key={p.id}
-              initial={false}
-              animate={
-                out
-                  ? { y: 60, rotate: 35, opacity: 0.15, scale: 0.85 }
-                  : { y: 0, rotate: 0, opacity: st ? 1 : 0.35, scale: st === "done" ? 1.08 : 1 }
-              }
-              transition={{ type: "spring", damping: 12, stiffness: 140 }}
-              className="flex flex-col items-center"
-              style={{ width: tile }}
-            >
-              <span
-                className={cx("leading-none", st === "holding" && "animate-bob", !st && "grayscale")}
-                style={{ fontSize: tile * 0.55 }}
+      <Card className="relative flex min-w-0 flex-1 flex-col overflow-hidden p-6">
+        <div className="flex items-baseline justify-between">
+          <span className="text-3xl font-extrabold">🪿 The flock</span>
+          <span className="font-mono text-xl font-bold uppercase">
+            {!startedAt ? `${n} ready` : revealed ? `${s.done} locked in · ${s.failed} distracted` : `${s.stillFocused} still focused`}
+          </span>
+        </div>
+        <div className="flex flex-1 flex-wrap content-center justify-center gap-3">
+          {players.length === 0 && <div className="m-auto font-mono text-2xl font-bold">Waiting for geese to join…</div>}
+          {players.map((p, i) => {
+            const st = f[p.id]?.focus;
+            const out = st === "failed";
+            const done = st === "done";
+            // waddle while waiting, bob fast while holding, stand proud when locked in, drop when distracted
+            const motionClass = out ? "" : st === "holding" ? "animate-[bob_0.9s_ease-in-out_infinite]" : done ? "" : "animate-[bob_2.6s_ease-in-out_infinite]";
+            return (
+              <motion.div
+                key={p.id}
+                initial={false}
+                animate={
+                  out
+                    ? { y: 70, rotate: 40, opacity: 0.15, scale: 0.8 }
+                    : { y: 0, rotate: 0, opacity: st || !startedAt ? 1 : 0.4, scale: done ? 1.12 : 1 }
+                }
+                transition={{ type: "spring", damping: 12, stiffness: 140 }}
+                className="relative flex flex-col items-center"
+                style={{ width: tile }}
               >
-                🪿
-              </span>
-              <span className="mt-1 w-full truncate text-center text-base font-bold">{p.nickname}</span>
-            </motion.div>
-          );
-        })}
+                {done && (
+                  <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} className="absolute -top-2 right-2 text-2xl">
+                    ✨
+                  </motion.span>
+                )}
+                <span
+                  className={cx("leading-none", motionClass, startedAt && !st && "grayscale")}
+                  style={{ fontSize: tile * 0.55, animationDelay: `${(i % 7) * 0.15}s` }}
+                >
+                  🪿
+                </span>
+                <span className={cx("mt-1 w-full truncate text-center text-base font-bold", done && "text-mint")}>{p.nickname}</span>
+              </motion.div>
+            );
+          })}
+        </div>
       </Card>
     </div>
   );

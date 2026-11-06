@@ -3,10 +3,11 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useHostGame } from "@/hooks/useHostGame";
+import { useWakeLock } from "@/hooks/useWakeLock";
 import { burst } from "@/lib/confetti";
 import { serverNow } from "@/lib/clock";
 import { publicSiteUrl } from "@/lib/env";
-import { FOCUS_MS, isQuiz, QUIZ_MS, SCREENS, type Screen } from "@/lib/flow";
+import { FOCUS_MS, isQuiz, QUIZ_MS, roundAnswers, SCREENS, type Screen } from "@/lib/flow";
 import { sfx } from "@/lib/sound";
 import { CONTROLS_H, HostControls } from "./HostControls";
 import { JoinBadge } from "./JoinBadge";
@@ -24,6 +25,7 @@ export function HostApp() {
   const { room, state, players, answers, status, error, actions, backend } = useHostGame({ onJoin: () => sfx.join(), onAnswer: () => sfx.pop() });
   const [muted, setMuted] = useState(sfx.muted);
   const [showBar, setShowBar] = useState(true);
+  useWakeLock();
 
   const toggleMute = () => {
     sfx.setMuted(!sfx.muted);
@@ -115,8 +117,10 @@ export function HostApp() {
   /* quizzes reveal themselves when the clock runs out or everyone has answered */
   const current = state ? SCREENS[state.screen] : null;
   const quizKey = current && isQuiz(current) ? current.q.key : null;
-  const quizAnswered = quizKey ? Object.keys(answers[quizKey] ?? {}).length : 0;
   const startedAt = state?.started_at ?? null;
+  // Only answers from the round that's running now (not leftovers from an earlier visit or a Redo).
+  const live = current ? roundAnswers(current, answers, startedAt) : answers;
+  const quizAnswered = quizKey ? Object.keys(live[quizKey] ?? {}).length : 0;
   const autoRevealed = useRef<string | null>(null);
   useEffect(() => {
     if (!quizKey || revealed || !startedAt || autoRevealed.current === startedAt) return;
@@ -131,7 +135,7 @@ export function HostApp() {
 
   /* Focus Challenge: show results once nobody is still holding after 15s (hard stop at 40s) */
   const focusOn = current?.type === "focus";
-  const stillHolding = focusOn ? Object.values(answers.focus ?? {}).filter((v) => v.focus === "holding").length : 0;
+  const stillHolding = focusOn ? Object.values(live.focus ?? {}).filter((v) => v.focus === "holding").length : 0;
   const focusRevealedFor = useRef<string | null>(null);
   useEffect(() => {
     if (!focusOn || revealed || !startedAt || focusRevealedFor.current === startedAt) return;
@@ -204,11 +208,11 @@ export function HostApp() {
       case "talk":
         return <TalkScreen s={s} step={slideStep} corner={<JoinBadge url={joinUrl} code={room!.code} />} />;
       case "question":
-        return <QuestionScreen q={s.q} answers={answers} players={players} revealed={state!.revealed} locked={state!.locked} startedAt={state!.started_at} />;
+        return <QuestionScreen q={s.q} answers={live} players={players} revealed={state!.revealed} locked={state!.locked} startedAt={state!.started_at} />;
       case "double":
         return <StudyScrollScreen answers={answers} playerCount={players.length} revealed={state!.revealed} locked={state!.locked} />;
       case "focus":
-        return <FocusScreen players={players} answers={answers} startedAt={state!.started_at} revealed={state!.revealed} />;
+        return <FocusScreen players={players} answers={live} startedAt={state!.started_at} revealed={state!.revealed} />;
       case "finale":
         return <FinaleScreen startedAt={state!.started_at} players={players} answers={answers} />;
     }

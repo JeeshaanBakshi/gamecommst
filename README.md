@@ -18,7 +18,7 @@ It opens with a wall of everyone's bald WatCards. After that, each section works
 | 1 | Gurshaan | Bald WatCard collage · What is the Waterloo Effect? · Why it hits home | How stressed are you? (1–5) → Quiz: which midterm sent the viral "you matter more than your grades" email? |
 | 2 | Austin | You studied all night, so where did it go? · No sleep → cortisol → hair · The fix | Hours of sleep → Quiz: how much sleep do adults need? |
 | 3 | Jacob | Stress eating · 400 mg · Iron, protein, zinc, vitamin D · Cheap student fixes · Recap | Meals skipped per week → Quiz: Health Canada's daily caffeine limit? |
-| 4 | Jeeshaan | My "perfect" day · Stress that never clocks out → **Quiz:** the stress hormone → **Poll:** study vs doomscroll → Plan it. Block it. Banish it. | (games are inside the talk) |
+| 4 | Jeeshaan | TIME · One real day (the 40-minute gap) · The Waterloo Effect, live · The Fix | **Focus Challenge** (hold for 15 s while fake notifications pop up) → Study vs doomscroll |
 | 5 | Emmanuel | SH\*\*\*WER · Hair care 101 · Massage, LeBron, and your parents | Baldness in the family? → Quiz: #1 cause of permanent hair loss? → **Closest to Bald** finale |
 
 Every answer is a single tap.
@@ -97,9 +97,21 @@ Free-tier notes: Supabase pauses projects after about a week with no activity. O
 | `F` | Fullscreen |
 | `H` | Hide / show the control bar |
 
+**↺ Redo** (control bar) clears everyone's answers to the current poll, quiz, study-vs-scroll or Focus Challenge and runs it again; other questions keep their answers.
+
+**Focus Challenge:** press → to start the round; results appear by themselves once everyone has finished (about 15–20 s); press → to move on. On "One real day", the times appear on their own and one click shows the red 40-minute bracket.
+
 Presentation clickers send PageUp/PageDown, so they work out of the box. The control bar sits in its own strip **below** the slide, so it never covers any text or images. Press **H** to hide or show it (the slide still fits either way). It has the same buttons, a dropdown to jump to any screen, and **Reset room**, which removes all players and answers and sends every phone back to the join screen. Use it after a practice run.
 
 The host remembers its room, so refreshing `/host` keeps the same code and players. Phones that refresh or briefly lose Wi-Fi rejoin as the same player automatically, and people who join late land on the current screen.
+
+## Final checklist (presentation day)
+
+1. Open the Supabase dashboard once the day before so the free project isn't paused.
+2. On the projector laptop open **gamecommst-xagg.vercel.app/host** (refresh if it was already open), enter the password, press **F** for fullscreen and click once so sound works.
+3. Press **Reset room** for a clean lobby, leave the QR up while people join.
+4. Ask anyone who opened the game earlier to **refresh** their phone.
+5. Use → / the clicker. Every screen moves on in at most 2 clicks.
 
 ## Troubleshooting
 

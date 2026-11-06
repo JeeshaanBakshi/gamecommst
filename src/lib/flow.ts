@@ -1,5 +1,5 @@
 import { SPEAKER_PHOTOS, TALKS, type SlideDef, type TalkDef } from "./slides";
-import type { QuestionKey } from "./types";
+import type { AnswerIndex, QuestionKey } from "./types";
 
 /** Quizzes auto-reveal after this long (or as soon as everyone has answered). */
 export const QUIZ_MS = 20_000;
@@ -245,6 +245,21 @@ export function screenKeys(screen: Screen): QuestionKey[] {
   if (screen.type === "double") return [screen.qs[0].key, screen.qs[1].key];
   if (screen.type === "focus") return ["focus"];
   return [];
+}
+
+/**
+ * Answers that belong to the round currently running on this screen.
+ * Quizzes and the Focus Challenge start a fresh round each time they're shown (or redone),
+ * so leftovers from an earlier round must not count. Polls keep all answers.
+ */
+export function roundAnswers(screen: Screen, answers: AnswerIndex, startedAt: string | null): AnswerIndex {
+  if (!(isQuiz(screen) || screen.type === "focus")) return answers;
+  const out: AnswerIndex = { ...answers };
+  for (const k of screenKeys(screen)) {
+    const all = answers[k] ?? {};
+    out[k] = Object.fromEntries(Object.entries(all).filter(([, v]) => (v.r ?? null) === startedAt));
+  }
+  return out;
 }
 
 export function isRevealable(screen: Screen) {
