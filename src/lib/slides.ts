@@ -80,12 +80,12 @@ export const TALKS = {
     speaker: "Austin",
     slides: [
       {
-        title: "Sleep deprivation",
+        title: "You studied all night. So where did it go?",
         emoji: "🌙",
         bullets: [
-          "You're supposed to get 7 to 9 hours a night",
-          "Most of us get 5, maybe 6 if we're lucky",
-          "Your brain saves what you learned while you sleep, so all-nighters = remember less",
+          "You need 7–9 hours a night. At Waterloo, that's how long the line at Tims is",
+          "Most of us run on 5, maybe 6 if we're lucky",
+          "Your brain saves what you learned while you sleep. All-nighter = study more, remember less",
         ],
       },
       {
@@ -93,9 +93,9 @@ export const TALKS = {
         emoji: "😰",
         image: "/slides/cortisol.jpg",
         bullets: [
-          "~18 hours awake ≈ the focus of a 0.05 blood alcohol level",
-          "Less sleep = more cortisol, your stress hormone",
-          "Hair goes into its resting phase and falls out 2–3 months later",
+          "~18 hours awake ≈ a 0.05 blood alcohol level. That 9am exam? You wrote it tipsy",
+          "No sleep = more cortisol, your stress hormone",
+          "Hair hits its resting phase and falls out 2–3 months later. Your January pillow is a midterm souvenir",
         ],
       },
       {
@@ -103,7 +103,7 @@ export const TALKS = {
         emoji: "😴",
         bullets: [
           "Aim for at least 7 hours",
-          "Put your phone down 30 minutes before bed",
+          "Phone down 30 minutes before bed",
           "Stop cramming all night. Your hairline is begging you",
         ],
       },
@@ -119,27 +119,45 @@ export const TALKS = {
         title: "Stress eating",
         emoji: "🍜",
         bullets: [
-          "Stress raises cortisol, which drives cravings for sugary and salty food",
-          "In one study of students during exams, half skipped more meals",
-          "Skip, binge, repeat",
+          "Stress raises cortisol, and cortisol craves sugary, salty comfort food",
+          "That 11pm cup noodle? Might be biology, not just cravings",
+          "In a study of students during exams, half skipped more meals. Skip, binge, repeat",
         ],
       },
       {
         title: "400 mg",
         emoji: "☕",
         bullets: [
-          "Health Canada: no more than 400 mg of caffeine a day for adults",
-          "Filter coffee ≈ 100–140 mg · energy drink ≈ 50–180 mg",
-          "Add up what you had yesterday. Over 400? Raise your hand",
+          "Health Canada's daily caffeine limit for healthy adults (about three 8 oz coffees)",
+          "Filter coffee ≈ 100–140 mg · Energy drink ≈ 50–180 mg",
+          "Add up your day before exams. Over 400? Raise your hand ✋",
         ],
       },
       {
-        title: "Feed your hair",
+        title: "Iron · Protein · Zinc · Vitamin D",
+        emoji: "🥬",
+        bullets: [
+          "The four nutrients research links to hair growth and maintenance",
+          "Hair is one of the fastest-growing tissues, so it's first to show a bad diet",
+          "Food first. Supplements matter most if you're actually low, so talk to a doctor",
+        ],
+      },
+      {
+        title: "Cheap student fixes",
         emoji: "🥚",
         bullets: [
-          "Iron, protein, zinc and vitamin D",
-          "Cheap fixes: eggs, canned fish, beans, Greek yogurt, peanut butter",
-          "Crack an egg or toss frozen veggies into your instant noodles",
+          "Eggs, canned fish, beans and lentils, Greek yogurt, peanut butter",
+          "Cheap, fast, and they cover most of those four nutrients",
+          "Crack an egg or toss frozen veggies into your instant noodles. 30 seconds",
+        ],
+      },
+      {
+        title: "Recap",
+        emoji: "📝",
+        bullets: [
+          "Stress changes what we eat",
+          "Caffeine fuels the cycle",
+          "The right foods help protect your hair",
         ],
       },
     ],
@@ -151,21 +169,30 @@ export const TALKS = {
     speaker: "Jeeshaan",
     slides: [
       {
-        title: "Managing courseload",
-        emoji: "📚",
+        title: "My \u201cperfect\u201d day",
+        emoji: "📅",
         bullets: [
-          "A “perfect” day: 1 presentation, 1 quiz, and a midterm right after",
-          "5 courses + co-op apps + clubs = chronic stress",
-          "Chronic stress keeps cortisol up for weeks, not hours",
+          "📽️ A presentation (hi, it's this one)",
+          "📝 A quiz",
+          "💀 And a midterm right after, for flavour",
         ],
       },
       {
-        title: "How to manage it",
-        emoji: "🗓️",
+        title: "Stress that never clocks out",
+        emoji: "⏰",
         bullets: [
-          "Plan the week on Sunday. Big deadlines first",
-          "Study in focused blocks: 25 min on, 5 min break",
-          "Phone in another room while you study",
+          "5 courses + co-op apps + clubs + the group chat that only says \u201csounds good\u201d",
+          "One stressful day: your body handles it. Every week: cortisol stays high for weeks",
+          "Same cortisol Austin and Jacob warned you about. Now it's on your hairline's schedule",
+        ],
+      },
+      {
+        title: "Plan it. Block it. Banish it.",
+        emoji: "🍅",
+        bullets: [
+          "Plan the week on Sunday. 10 minutes now saves a 3am panic on Thursday",
+          "25 minutes on, 5 off: the Pomodoro technique (named after a tomato timer 🍅)",
+          "Phone in another room. Even face-down on your desk, it drags your focus",
         ],
       },
     ],
@@ -181,18 +208,18 @@ export const TALKS = {
         title: "Hair care 101",
         emoji: "🚿",
         bullets: [
-          "Cool or cold water on your head, not hot",
-          "Avoid heat: blow dryers, curling irons, straighteners. Use heat protectant",
-          "Don't touch or style your hair while it's wet",
+          "Cool or cold water on your head. Heat is your scalp's worst enemy",
+          "Blow dryers, curling irons, straighteners: avoid, or use a heat protectant spray",
+          "Don't touch or style your hair while it's wet. It looks great. Leave it alone",
         ],
       },
       {
         title: "Massage, LeBron, and your parents",
         emoji: "💆",
         bullets: [
-          "Massage your scalp with an oil that suits your hair type",
-          "Worst case: the LeBron route (hair transplant)",
-          "It's mostly genetics. Blame your parents, not Waterloo",
+          "Free scalp massage (Terry Crews not included). Add an oil that suits your hair type",
+          "Worst case: the LeBron route. Hair transplant, bald to Rapunzel",
+          "It's mostly genetics. Don't blame Waterloo, blame your parents",
         ],
       },
     ],

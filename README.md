@@ -13,13 +13,13 @@ Built with Next.js (App Router), TypeScript, Tailwind, Supabase (Postgres + Real
 
 It opens with a wall of everyone's bald WatCards. After that, each section works the same way: **the speaker's slides → a poll → a quiz.** While someone is presenting, every phone shows **that speaker's photo** with *"Pay attention if you don't wanna go bald."*
 
-| # | Speaker | Slides | Then the audience answers |
+| # | Speaker | Slides (from each person's script) | Then the audience answers |
 |---|---------|--------|---------------------------|
-| 1 | Gurshaan | Bald WatCard wall · What is the Waterloo Effect? · Why it hits home | How stressed are you? (1–5) → Quiz: which midterm sent the viral "you matter more than your grades" email? |
-| 2 | Austin | Sleep deprivation · No sleep → cortisol → hair · The fix | Hours of sleep → Quiz: how much sleep do adults need? |
-| 3 | Jacob | Stress eating · 400 mg · Feed your hair | Meals skipped per week → Quiz: Health Canada's daily caffeine limit? |
-| 4 | Jeeshaan | Managing courseload · How to manage it | Study vs doomscroll hours → Quiz: which hormone is the "stress hormone"? |
-| 5 | Emmanuel | SH***WER · Hair care 101 · Massage, LeBron, and your parents | Baldness in the family? → Quiz: #1 cause of permanent hair loss? → **Closest to Bald** finale |
+| 1 | Gurshaan | Bald WatCard collage · What is the Waterloo Effect? · Why it hits home | How stressed are you? (1–5) → Quiz: which midterm sent the viral "you matter more than your grades" email? |
+| 2 | Austin | You studied all night, so where did it go? · No sleep → cortisol → hair · The fix | Hours of sleep → Quiz: how much sleep do adults need? |
+| 3 | Jacob | Stress eating · 400 mg · Iron, protein, zinc, vitamin D · Cheap student fixes · Recap | Meals skipped per week → Quiz: Health Canada's daily caffeine limit? |
+| 4 | Jeeshaan | My "perfect" day · Stress that never clocks out → **Quiz:** the stress hormone → **Poll:** study vs doomscroll → Plan it. Block it. Banish it. | (games are inside the talk) |
+| 5 | Emmanuel | SH\*\*\*WER · Hair care 101 · Massage, LeBron, and your parents | Baldness in the family? → Quiz: #1 cause of permanent hair loss? → **Closest to Bald** finale |
 
 Every answer is a single tap.
 
@@ -82,7 +82,7 @@ Free-tier notes: Supabase pauses projects after about a week with no activity. O
 
 ## On presentation day
 
-1. Open `/host` on the projector laptop and press **F** for fullscreen.
+1. Open `/host` on the projector laptop and enter the presenter password: **1234**. (Change it by adding a `HOST_PASSWORD` environment variable in Vercel, then redeploy.) The laptop stays unlocked for 12 hours. Press **F** for fullscreen.
 2. **Click once anywhere on the page** so the browser allows sound.
 3. Leave the lobby up while people scan the QR code. Click a player's tile to remove an inappropriate name.
 4. Press **→** to move through the slides and games.
@@ -100,6 +100,17 @@ Free-tier notes: Supabase pauses projects after about a week with no activity. O
 Presentation clickers send PageUp/PageDown, so they work out of the box. The control bar sits in its own strip **below** the slide, so it never covers any text or images. Press **H** to hide or show it (the slide still fits either way). It has the same buttons, a dropdown to jump to any screen, and **Reset room**, which removes all players and answers and sends every phone back to the join screen. Use it after a practice run.
 
 The host remembers its room, so refreshing `/host` keeps the same code and players. Phones that refresh or briefly lose Wi-Fi rejoin as the same player automatically, and people who join late land on the current screen.
+
+## Troubleshooting
+
+| You see | Fix |
+|---------|-----|
+| **"Could not find the table 'public.rooms' in the schema cache"** | The database tables don't exist yet. Supabase → **SQL Editor → New query** → paste *all* of `supabase/schema.sql` → **Run** → refresh `/host`. Safe to run again if you already did. |
+| Red **"NOT CONNECTED TO SUPABASE"** in the lobby / phones say "Game not connected yet" | Add the two `NEXT_PUBLIC_SUPABASE_*` variables in Vercel → Settings → Environment Variables, then **Deployments → Redeploy**. |
+| Phones can't load the site | The QR points at the address the host page is open on. Open `/host` from your Vercel URL, not `localhost`. |
+| Supabase project "paused" | Free projects pause after about a week with no activity. Open the Supabase dashboard and click **Restore**. Do this the day before you present. |
+
+Every slide has a small **scan to join** QR in the top-right corner, so people who arrive late can still join.
 
 ## Project structure
 

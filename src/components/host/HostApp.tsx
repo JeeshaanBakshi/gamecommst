@@ -8,6 +8,7 @@ import { serverNow } from "@/lib/clock";
 import { isQuiz, QUIZ_MS, SCREENS, type Screen } from "@/lib/flow";
 import { sfx } from "@/lib/sound";
 import { CONTROLS_H, HostControls } from "./HostControls";
+import { JoinBadge } from "./JoinBadge";
 import { Stage } from "./Stage";
 import { TopBar } from "./TopBar";
 import { FinaleScreen } from "./screens/FinaleScreen";
@@ -105,7 +106,11 @@ export function HostApp() {
     return (
       <Fullscreen
         msg={`Couldn't start the room: ${error}`}
-        hint="Check that supabase/schema.sql was run in the Supabase SQL Editor and that the two NEXT_PUBLIC_SUPABASE_* environment variables are set."
+        hint={
+          /schema cache|does not exist|relation/i.test(error)
+            ? "The database tables don't exist yet. In Supabase: SQL Editor → New query → paste ALL of supabase/schema.sql from the repo → Run. Then refresh this page."
+            : "Check that supabase/schema.sql was run in the Supabase SQL Editor and that the two NEXT_PUBLIC_SUPABASE_* environment variables are set."
+        }
       />
     );
   if (!room || !state) return <Fullscreen msg="Setting up the room…" />;
@@ -118,7 +123,7 @@ export function HostApp() {
     <>
       <Stage bottom={showBar ? CONTROLS_H : 0}>
         {screen.type !== "lobby" && !(screen.type === "talk" && screen.wall) && (
-          <TopBar screen={screen} code={room.code} playerCount={players.length} status={status} />
+          <TopBar screen={screen} code={room.code} joinUrl={joinUrl} playerCount={players.length} status={status} />
         )}
         <AnimatePresence mode="wait">
           <motion.div
@@ -155,7 +160,7 @@ export function HostApp() {
       case "lobby":
         return <LobbyScreen code={room!.code} joinUrl={joinUrl} players={players} onKick={(id) => void actions.kick(id)} localMode={backend.mode === "local"} />;
       case "talk":
-        return <TalkScreen s={s} />;
+        return <TalkScreen s={s} corner={<JoinBadge url={joinUrl} code={room!.code} />} />;
       case "question":
         return <QuestionScreen q={s.q} answers={answers} players={players} revealed={state!.revealed} locked={state!.locked} startedAt={state!.started_at} />;
       case "double":

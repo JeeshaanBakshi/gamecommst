@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import type { ReactNode } from "react";
 import Image from "next/image";
 import type { Screen } from "@/lib/flow";
 import { BaldWall } from "../BaldWall";
@@ -9,8 +10,8 @@ import { ShowerSlide } from "../ShowerSlide";
 type TalkDef = Extract<Screen, { type: "talk" }>;
 
 /** A speaker's slide: number, title, points (plus a picture if the slide has one). */
-export function TalkScreen({ s }: { s: TalkDef }) {
-  if (s.wall) return <BaldWall />;
+export function TalkScreen({ s, corner }: { s: TalkDef; corner?: ReactNode }) {
+  if (s.wall) return <BaldWall corner={corner} />;
   if (s.shower) return <ShowerSlide />;
   return (
     <div className="absolute inset-0 flex items-center gap-14 px-24 pb-20 pt-[130px]">

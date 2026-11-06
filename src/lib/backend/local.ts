@@ -3,36 +3,49 @@
  * Data lives in localStorage and syncs between tabs of the SAME browser via
  * BroadcastChannel, so you can open /host and a few /play tabs side by side
  * to rehearse. Real phones need the Supabase backend.
+ *
+ * Every row has its own localStorage key (like a table row), so several tabs
+ * answering at the same moment never overwrite each other.
  */
 import { uid } from "../uid";
 import type { Answer, GameState, Player, Room } from "../types";
 import { PlayerGoneError, type Backend, type Handlers } from "./types";
-
-interface DB {
-  rooms: Room[];
-  states: Record<string, GameState>;
-  players: Player[];
-  answers: Answer[];
-}
 
 type Msg =
   | { kind: "state"; row: GameState }
   | { kind: "player"; row: Player }
   | { kind: "answer"; row: Answer };
 
-const KEY = "wle-local-db-v1";
+const P = "wle2:";
+const K = {
+  room: (code: string) => `${P}room:${code}`,
+  state: (roomId: string) => `${P}state:${roomId}`,
+  player: (id: string) => `${P}player:${id}`,
+  answer: (playerId: string, q: string) => `${P}answer:${playerId}:${q}`,
+};
 const FRESH = { screen: 0, revealed: false, locked: false, started_at: null };
 
-function load(): DB {
+function get<T>(key: string): T | null {
   try {
-    const raw = localStorage.getItem(KEY);
-    if (raw) return JSON.parse(raw) as DB;
-  } catch {}
-  return { rooms: [], states: {}, players: [], answers: [] };
+    const raw = localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : null;
+  } catch {
+    return null;
+  }
 }
+const put = (key: string, v: unknown) => localStorage.setItem(key, JSON.stringify(v));
+const del = (key: string) => localStorage.removeItem(key);
 
-function save(db: DB) {
-  localStorage.setItem(KEY, JSON.stringify(db));
+function scan<T>(prefix: string): { key: string; row: T }[] {
+  const out: { key: string; row: T }[] = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key?.startsWith(prefix)) {
+      const row = get<T>(key);
+      if (row) out.push({ key, row });
+    }
+  }
+  return out;
 }
 
 export function createLocalBackend(): Backend {
@@ -42,13 +55,6 @@ export function createLocalBackend(): Backend {
   const emit = (m: Msg) => {
     bc?.postMessage(m);
     sameTab.dispatchEvent(new CustomEvent<Msg>("msg", { detail: m }));
-  };
-
-  const tx = <T,>(fn: (db: DB) => T): T => {
-    const db = load();
-    const out = fn(db);
-    save(db);
-    return out;
   };
 
   const delay = () => new Promise((r) => setTimeout(r, 30 + Math.random() * 60));
@@ -62,82 +68,79 @@ export function createLocalBackend(): Backend {
 
     async createRoom(code) {
       await delay();
-      return tx((db) => {
-        const room: Room = { id: uid(), code, created_at: new Date().toISOString() };
-        const state: GameState = { room_id: room.id, ...FRESH, epoch: 0, rev: 0 };
-        db.rooms.push(room);
-        db.states[room.id] = state;
-        return { room, state };
-      });
+      const room: Room = { id: uid(), code, created_at: new Date().toISOString() };
+      const state: GameState = { room_id: room.id, ...FRESH, epoch: 0, rev: 0 };
+      put(K.room(code), room);
+      put(K.state(room.id), state);
+      return { room, state };
     },
 
     async getRoomByCode(code) {
-      return load().rooms.find((r) => r.code === code.toUpperCase()) ?? null;
+      return get<Room>(K.room(code.toUpperCase()));
     },
 
     async getState(roomId) {
-      return load().states[roomId] ?? null;
+      return get<GameState>(K.state(roomId));
     },
 
     async updateState(roomId, patch) {
       await delay();
-      const row = tx((db) => (db.states[roomId] = { ...db.states[roomId], ...patch, updated_at: new Date().toISOString() }));
+      const row = { ...get<GameState>(K.state(roomId))!, ...patch, updated_at: new Date().toISOString() };
+      put(K.state(roomId), row);
       emit({ kind: "state", row });
     },
 
     async listPlayers(roomId) {
-      return load().players.filter((p) => p.room_id === roomId);
+      return scan<Player>(`${P}player:`)
+        .map((x) => x.row)
+        .filter((p) => p.room_id === roomId)
+        .sort((a, b) => a.created_at.localeCompare(b.created_at));
     },
 
     async getPlayer(id) {
-      return load().players.find((p) => p.id === id) ?? null;
+      return get<Player>(K.player(id));
     },
 
     async addPlayers(rows) {
       await delay();
-      const created = tx((db) => {
-        const out = rows.map((r) => ({ ...r, id: uid(), created_at: new Date().toISOString() }));
-        db.players.push(...out);
-        return out;
-      });
+      const created = rows.map((r) => ({ ...r, id: uid(), created_at: new Date().toISOString() }));
+      created.forEach((p) => put(K.player(p.id), p));
       created.forEach((row) => emit({ kind: "player", row }));
       return created;
     },
 
     async removePlayer(id) {
-      tx((db) => {
-        db.players = db.players.filter((p) => p.id !== id);
-        db.answers = db.answers.filter((a) => a.player_id !== id);
-      });
+      del(K.player(id));
+      scan(`${P}answer:${id}:`).forEach((x) => del(x.key));
     },
 
     async listAnswers(roomId) {
-      return load().answers.filter((a) => a.room_id === roomId);
+      return scan<Answer>(`${P}answer:`)
+        .map((x) => x.row)
+        .filter((a) => a.room_id === roomId);
     },
 
     async listPlayerAnswers(playerId) {
-      return load().answers.filter((a) => a.player_id === playerId);
+      return scan<Answer>(`${P}answer:${playerId}:`).map((x) => x.row);
     },
 
     async upsertAnswers(rows) {
       await delay();
-      tx((db) => {
-        for (const r of rows) {
-          if (!db.players.some((p) => p.id === r.player_id)) throw new PlayerGoneError();
-          const i = db.answers.findIndex((a) => a.player_id === r.player_id && a.question === r.question);
-          if (i >= 0) db.answers[i] = r;
-          else db.answers.push(r);
-        }
-      });
+      for (const r of rows) {
+        if (!get(K.player(r.player_id))) throw new PlayerGoneError();
+        put(K.answer(r.player_id, r.question), r);
+      }
       rows.forEach((row) => emit({ kind: "answer", row }));
     },
 
     async resetRoom(roomId, next) {
-      const row = tx((db) => {
-        db.players = db.players.filter((p) => p.room_id !== roomId);
-        db.answers = db.answers.filter((a) => a.room_id !== roomId);
-        return (db.states[roomId] = { ...db.states[roomId], ...FRESH, ...next });
-      });
+      for (const { key, row } of scan<Player>(`${P}player:`)) {
+        if (row.room_id !== roomId) continue;
+        del(key);
+        scan(`${P}answer:${row.id}:`).forEach((x) => del(x.key));
+      }
+      const row = { ...get<GameState>(K.state(roomId))!, ...FRESH, ...next };
+      put(K.state(roomId), row);
       emit({ kind: "state", row });
     },
 

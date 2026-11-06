@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import type { ReactNode } from "react";
 import Image from "next/image";
 import { BALD_WALL } from "@/lib/slides";
 import { Scribble } from "../ui";
@@ -8,10 +9,11 @@ import { Scribble } from "../ui";
 const COLS = 5;
 
 /** Opening slide: the whole class after one term, as a pinned-up collage. */
-export function BaldWall() {
+export function BaldWall({ corner }: { corner?: ReactNode }) {
   const cards = [...BALD_WALL].sort();
   return (
     <div className="absolute inset-0 flex flex-col items-center px-12 pb-8 pt-10">
+      <div className="flex w-full items-center justify-between px-6">
       <motion.div
         initial={{ y: -40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -26,6 +28,8 @@ export function BaldWall() {
           <Scribble delay={0.5} />
         </div>
       </motion.div>
+      {corner}
+      </div>
 
       <div className="mt-8 grid gap-x-7 gap-y-5" style={{ gridTemplateColumns: `repeat(${COLS}, 313px)` }}>
         {cards.map((src, i) => (

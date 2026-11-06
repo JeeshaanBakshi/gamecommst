@@ -234,9 +234,11 @@ export const SCREENS: Screen[] = [
   ask(TALKS.eating, Q.meals),
   ask(TALKS.eating, Q.quiz_caffeine),
 
-  ...talk(TALKS.courseload, "s4"),
-  { type: "double", id: "q-study-scroll", section: TALKS.courseload.section, qs: [Q.study, Q.scroll] },
+  // Jeeshaan's section follows his speech: 2 slides → cortisol quiz → doomscroll poll → the fix.
+  ...talk(TALKS.courseload, "s4").slice(0, 2),
   ask(TALKS.courseload, Q.quiz_cortisol),
+  { type: "double", id: "q-study-scroll", section: TALKS.courseload.section, qs: [Q.study, Q.scroll] },
+  ...talk(TALKS.courseload, "s4").slice(2),
 
   ...talk(TALKS.bald, "s5"),
   ask(TALKS.bald, Q.family),

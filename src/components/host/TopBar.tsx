@@ -4,15 +4,17 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { Screen } from "@/lib/flow";
 import type { ConnStatus } from "@/lib/types";
 import { StatusDot, Sticker } from "../ui";
+import { JoinBadge } from "./JoinBadge";
 
 interface Props {
   screen: Screen;
   code: string;
+  joinUrl: string;
   playerCount: number;
   status: ConnStatus;
 }
 
-export function TopBar({ screen, code, playerCount, status }: Props) {
+export function TopBar({ screen, code, joinUrl, playerCount, status }: Props) {
   const label = screen.section;
   return (
     <div className="absolute inset-x-0 top-0 z-20 flex h-[100px] items-center justify-between px-14 text-ink">
@@ -31,9 +33,7 @@ export function TopBar({ screen, code, playerCount, status }: Props) {
         <span className="flex items-center gap-3">
           <StatusDot status={status} /> 👥 {playerCount}
         </span>
-        <span className="rounded-xl border-[3px] border-ink bg-paper px-4 py-1">
-          JOIN · <span className="tracking-[0.2em]">{code}</span>
-        </span>
+        <JoinBadge url={joinUrl} code={code} />
       </div>
     </div>
   );

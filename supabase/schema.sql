@@ -90,3 +90,7 @@ begin
     end if;
   end loop;
 end $$;
+
+-- ---------- make the API see the new tables right away ----------
+-- (fixes "Could not find the table 'public.rooms' in the schema cache")
+notify pgrst, 'reload schema';
