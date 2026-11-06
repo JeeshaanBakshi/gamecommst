@@ -10,18 +10,17 @@ interface Props {
   code: string;
   playerCount: number;
   status: ConnStatus;
-  dark?: boolean;
 }
 
-export function TopBar({ screen, code, playerCount, status, dark }: Props) {
+export function TopBar({ screen, code, playerCount, status }: Props) {
   const label = screen.section;
   return (
-    <div className={`absolute inset-x-0 top-0 z-20 flex h-[100px] items-center justify-between px-14 ${dark ? "text-gold" : "text-ink"}`}>
+    <div className="absolute inset-x-0 top-0 z-20 flex h-[100px] items-center justify-between px-14 text-ink">
       <div className="flex items-center gap-4">
         <AnimatePresence mode="wait">
           {label && (
             <motion.div key={label} initial={{ y: -30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -30, opacity: 0 }}>
-              <Sticker tone={dark ? "paper" : "ink"} className="text-2xl">
+              <Sticker className="text-2xl">
                 {label}
               </Sticker>
             </motion.div>
@@ -32,7 +31,7 @@ export function TopBar({ screen, code, playerCount, status, dark }: Props) {
         <span className="flex items-center gap-3">
           <StatusDot status={status} /> 👥 {playerCount}
         </span>
-        <span className={`rounded-xl border-[3px] px-4 py-1 ${dark ? "border-gold" : "border-ink bg-paper"}`}>
+        <span className="rounded-xl border-[3px] border-ink bg-paper px-4 py-1">
           JOIN · <span className="tracking-[0.2em]">{code}</span>
         </span>
       </div>

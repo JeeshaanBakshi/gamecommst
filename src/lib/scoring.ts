@@ -153,25 +153,3 @@ export function quizStats(players: Player[], idx: AnswerIndex, key: QuestionKey,
     .sort((x, y) => x.ms - y.ms);
   return { answered, right: right.length, pctRight: pct(right.length, answered), fastest: right.slice(0, 3) };
 }
-
-/* ---------- stress test (math round) ---------- */
-
-export function mathStats(idx: AnswerIndex) {
-  const vals = Object.values(idx.math ?? {}).map((m) => m.correct ?? 0);
-  const counts = [0, 1, 2, 3, 4, 5].map((c) => vals.filter((v) => v === c).length);
-  return { counts, n: vals.length, avg: avg(vals), pctPerfect: pct(counts[5], vals.length) };
-}
-
-export function mathCaption(avg5: number) {
-  if (avg5 >= 4) return "Big brains. Suspiciously small stress.";
-  if (avg5 >= 2.5) return "Respectable under pressure. Hairline holding.";
-  return "Math is hard when a goose is watching.";
-}
-
-export function mathLeaderboard(players: Player[], idx: AnswerIndex) {
-  const m = idx.math ?? {};
-  return players
-    .filter((p) => m[p.id])
-    .map((p) => ({ player: p, correct: m[p.id].correct ?? 0, ms: m[p.id].ms ?? Infinity }))
-    .sort((a, b) => b.correct - a.correct || a.ms - b.ms);
-}

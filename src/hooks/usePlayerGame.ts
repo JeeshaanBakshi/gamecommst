@@ -164,7 +164,7 @@ export function usePlayerGame() {
       if (!room) return;
       const s = stateRef.current ?? (await backend.getState(room.id));
       const epoch = s?.epoch ?? 0;
-      const [p] = await backend.addPlayers([{ room_id: room.id, nickname, emoji, is_fake: false, epoch }]);
+      const [p] = await backend.addPlayers([{ room_id: room.id, nickname, emoji, epoch }]);
       writeSession({ roomCode: room.code, playerId: p.id, epoch });
       playerRef.current = p;
       setPlayer(p);

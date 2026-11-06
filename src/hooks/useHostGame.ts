@@ -3,8 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getBackend } from "@/lib/backend";
 import { serverNow, syncClock } from "@/lib/clock";
-import { fakePlayers } from "@/lib/demo";
-import { isQuiz, isRevealable, MATH_DURATION_MS, SCREENS } from "@/lib/flow";
+import { isQuiz, isRevealable, SCREENS } from "@/lib/flow";
 import { indexAnswers, type Answer, type AnswerIndex, type ConnStatus, type GameState, type Player, type Room } from "@/lib/types";
 import { roomCode } from "@/lib/uid";
 
@@ -138,10 +137,6 @@ export function useHostGame(events: Events = {}) {
     if (!s) return;
     const scr = SCREENS[s.screen];
     if (isRevealable(scr) && !s.revealed) return write({ revealed: true, locked: true });
-    if (scr.type === "math") {
-      if (!s.started_at) return start();
-      if (serverNow() - Date.parse(s.started_at) < MATH_DURATION_MS) return; // let the clock run
-    }
     if (scr.type === "finale" && !s.started_at) return start();
     goTo(s.screen + 1);
   }, [write, start, goTo]);
@@ -156,7 +151,7 @@ export function useHostGame(events: Events = {}) {
     if (!s) return;
     const scr = SCREENS[s.screen];
     if (isRevealable(scr)) write({ revealed: !s.revealed, locked: !s.revealed ? true : s.locked });
-    else if ((scr.type === "finale" || scr.type === "math") && !s.started_at) start();
+    else if (scr.type === "finale" && !s.started_at) start();
   }, [write, start]);
 
   const toggleLock = useCallback(() => {
@@ -177,13 +172,6 @@ export function useHostGame(events: Events = {}) {
     await refresh(room.id);
   }, [backend, room, refresh]);
 
-  const newRoom = useCallback(() => {
-    localStorage.removeItem(HOST_ROOM_KEY);
-    // Full reload on purpose: drops every subscription and in-memory state.
-    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-    window.location.href = "/host";
-  }, []);
-
   const kick = useCallback(
     async (id: string) => {
       setPlayers((prev) => prev.filter((p) => p.id !== id));
@@ -192,22 +180,9 @@ export function useHostGame(events: Events = {}) {
     [backend],
   );
 
-  const playersRef = useRef<Player[]>([]);
-  useEffect(() => {
-    playersRef.current = players;
-  });
-
-  const seedFakes = useCallback(async () => {
-    const s = stateRef.current;
-    if (!room || !s) return;
-    const taken = playersRef.current.map((p) => p.nickname);
-    const created = await backend.addPlayers(fakePlayers(room.id, s.epoch, taken));
-    setPlayers((prev) => [...prev, ...created.filter((c) => !prev.some((p) => p.id === c.id))]);
-  }, [backend, room]);
-
   const actions = useMemo(
-    () => ({ next, prev, goTo, reveal, toggleLock, reset, newRoom, kick, seedFakes }),
-    [next, prev, goTo, reveal, toggleLock, reset, newRoom, kick, seedFakes],
+    () => ({ next, prev, goTo, reveal, toggleLock, reset, kick }),
+    [next, prev, goTo, reveal, toggleLock, reset, kick],
   );
 
   return {

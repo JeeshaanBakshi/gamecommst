@@ -83,14 +83,6 @@ export function Scribble({ className, delay = 0.3 }: { className?: string; delay
   );
 }
 
-export function CautionTape({ className, label }: { className?: string; label?: string }) {
-  return (
-    <div className={cx("caution-tape flex items-center justify-center overflow-hidden border-y-4 border-ink", className)}>
-      {label && <span className="bg-ink px-4 font-mono font-bold uppercase tracking-[0.3em] text-gold">{label}</span>}
-    </div>
-  );
-}
-
 export function Card({ children, className, dark }: { children: ReactNode; className?: string; dark?: boolean }) {
   return (
     <div className={cx("rounded-[28px] border-4 border-ink shadow-hard-lg transition-colors", dark ? "bg-ink text-gold" : "bg-paper", className)}>

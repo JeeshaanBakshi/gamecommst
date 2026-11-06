@@ -95,19 +95,7 @@ class Sfx {
     this.tone(990, 0.12, { type: "triangle", gain: 0.25, at: 0.07 });
   }
 
-  tick(urgent = false) {
-    if (urgent) {
-      this.tone(1500, 0.05, { type: "square", gain: 0.18 });
-      this.tone(90, 0.12, { type: "sine", gain: 0.5, to: 50 });
-    } else {
-      this.tone(1100, 0.03, { type: "square", gain: 0.1 });
-    }
-  }
 
-  buzzer() {
-    this.tone(140, 0.7, { type: "sawtooth", gain: 0.3, to: 90 });
-    this.tone(147, 0.7, { type: "square", gain: 0.12, to: 92 });
-  }
 
   whoosh() {
     this.noise(0.35, { gain: 0.25, freq: 900, q: 1.5 });

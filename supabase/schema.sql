@@ -27,7 +27,6 @@ create table if not exists public.players (
   room_id     uuid not null references public.rooms(id) on delete cascade,
   nickname    text not null check (char_length(nickname) between 1 and 24),
   emoji       text not null check (char_length(emoji) <= 16),
-  is_fake     boolean not null default false,
   epoch       int not null default 0,
   created_at  timestamptz not null default now()
 );

@@ -4,12 +4,12 @@ export type QuestionKey =
   | "meals"
   | "study"
   | "scroll"
-  | "math"
   | "family"
   | "quiz_shed"
   | "quiz_sleep"
   | "quiz_iron"
-  | "quiz_genetics";
+  | "quiz_genetics"
+  | "quiz_cortisol";
 
 export interface Room {
   id: string;
@@ -26,7 +26,7 @@ export interface GameState {
   revealed: boolean;
   /** Phones can no longer submit for the current screen. */
   locked: boolean;
-  /** Server-clock ISO timestamp for timed screens (math round, finale reveal). */
+  /** Server-clock ISO timestamp for timed screens (quiz countdown, finale reveal). */
   started_at: string | null;
   /** Bumped on "Reset room" so phones know to re-join. */
   epoch: number;
@@ -40,23 +40,15 @@ export interface Player {
   room_id: string;
   nickname: string;
   emoji: string;
-  is_fake: boolean;
   epoch: number;
   created_at: string;
 }
 
 export type NewPlayer = Omit<Player, "id" | "created_at">;
 
-/**
- * Choice / slider answers store the 0-based option index in `v`.
- * Math answers store progress: `correct`, `ms` (time of last correct answer), `done`.
- */
+/** `v` is the 0-based option index; quizzes also store `t` (server ms) for "fastest correct". */
 export interface AnswerValue {
   v?: number;
-  correct?: number;
-  ms?: number;
-  done?: boolean;
-  /** Server-clock ms when a quiz answer was submitted (for "fastest correct"). */
   t?: number;
 }
 

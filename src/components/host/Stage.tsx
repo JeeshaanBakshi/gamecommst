@@ -9,7 +9,7 @@ export const STAGE_H = 1080;
  * Everything on the host is laid out on a fixed 1920×1080 canvas and scaled to
  * fit the window, so it looks identical on any projector / laptop resolution.
  */
-export function Stage({ children, dark = false }: { children: ReactNode; dark?: boolean }) {
+export function Stage({ children }: { children: ReactNode }) {
   const [scale, setScale] = useState(() => Math.min(window.innerWidth / STAGE_W, window.innerHeight / STAGE_H));
 
   useEffect(() => {
@@ -19,9 +19,9 @@ export function Stage({ children, dark = false }: { children: ReactNode; dark?: 
   }, []);
 
   return (
-    <div className={`fixed inset-0 overflow-hidden transition-colors duration-500 ${dark ? "bg-ink" : "bg-gold"}`}>
+    <div className="fixed inset-0 overflow-hidden bg-gold">
       <div
-        className={`absolute left-1/2 top-1/2 overflow-hidden ${dark ? "bg-grid-dark" : "bg-grid"}`}
+        className="bg-grid absolute left-1/2 top-1/2 overflow-hidden"
         style={{ width: STAGE_W, height: STAGE_H, transform: `translate(-50%, -50%) scale(${scale})` }}
       >
         {children}

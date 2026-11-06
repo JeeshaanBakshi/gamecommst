@@ -56,10 +56,6 @@
   50% { opacity: 0; }
 }
 
-@keyframes ticker {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
 
 html,
 body {
@@ -89,13 +85,6 @@ button,
   background-size: 32px 32px;
 }
 
-.bg-grid-dark {
-  background-color: var(--color-ink);
-  background-image:
-    linear-gradient(rgba(254, 211, 76, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(254, 211, 76, 0.08) 1px, transparent 1px);
-  background-size: 32px 32px;
-}
 
 /* Lined exam paper */
 .bg-ruled {
@@ -109,18 +98,12 @@ button,
   );
 }
 
-.caution-tape {
-  background: repeating-linear-gradient(-45deg, var(--color-gold) 0 28px, var(--color-ink) 28px 56px);
-}
 
 .text-outline {
   -webkit-text-stroke: 3px var(--color-ink);
   color: transparent;
 }
 
-.ticker-track {
-  animation: ticker 40s linear infinite;
-}
 
 /* Big chunky range slider that works on iOS Safari */
 .wle-range {

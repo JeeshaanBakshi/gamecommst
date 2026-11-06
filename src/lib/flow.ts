@@ -1,9 +1,8 @@
 import { TALKS, type TalkDef } from "./slides";
 import type { QuestionKey } from "./types";
 
-export const MATH_DURATION_MS = 30_000;
 /** Quizzes auto-reveal after this long (or as soon as everyone has answered). */
-export const QUIZ_MS = 15_000;
+export const QUIZ_MS = 20_000;
 
 export interface ChoiceOption {
   label: string;
@@ -138,6 +137,21 @@ export const Q = {
     correct: 1,
     explain: "Low iron (and low protein) are well-known shedding triggers. Caffeine is not a vitamin.",
   },
+  quiz_cortisol: {
+    key: "quiz_cortisol",
+    kind: "choice",
+    prompt: "Which hormone is called the \"stress hormone\"?",
+    short: "Quiz",
+    options: [
+      { label: "Cortisol", emoji: "😰" },
+      { label: "Melatonin", emoji: "😴" },
+      { label: "Insulin", emoji: "🍩" },
+      { label: "Dopamine", emoji: "🎉" },
+    ],
+    bad: [],
+    correct: 0,
+    explain: "Cortisol. Keep it high for weeks (hello, midterm season) and your hair growth cycle suffers.",
+  },
   quiz_genetics: {
     key: "quiz_genetics",
     kind: "choice",
@@ -167,14 +181,11 @@ export type Screen =
       title: string;
       bullets: string[];
       emoji: string;
-      alert?: boolean;
       part: number;
       of: number;
     }
   | { type: "question"; id: string; section: string; q: QuestionDef }
   | { type: "double"; id: string; section: string; qs: [QuestionDef, QuestionDef] }
-  | { type: "math"; id: string; section: string }
-  | { type: "stressResults"; id: string; section: string }
   | { type: "finale"; id: string; section: string };
 
 function talk(t: TalkDef, id: string): Screen[] {
@@ -188,15 +199,12 @@ function talk(t: TalkDef, id: string): Screen[] {
     title: s.title,
     bullets: s.bullets,
     emoji: s.emoji,
-    alert: "alert" in s ? s.alert : undefined,
     part: i + 1,
     of: t.slides.length,
   }));
 }
 
 const ask = (t: TalkDef, q: QuestionDef): Screen => ({ type: "question", id: `q-${q.key}`, section: t.section, q });
-
-const ST = "4 · Stress Test";
 
 /** Each section: speaker's slides → poll → quiz. */
 export const SCREENS: Screen[] = [
@@ -216,28 +224,13 @@ export const SCREENS: Screen[] = [
 
   ...talk(TALKS.courseload, "s4"),
   { type: "double", id: "q-study-scroll", section: TALKS.courseload.section, qs: [Q.study, Q.scroll] },
-  { type: "math", id: "math", section: ST },
-  { type: "stressResults", id: "stress-results", section: ST },
+  ask(TALKS.courseload, Q.quiz_cortisol),
 
   ...talk(TALKS.bald, "s5"),
   ask(TALKS.bald, Q.family),
   ask(TALKS.bald, Q.quiz_genetics),
   { type: "finale", id: "finale", section: TALKS.bald.section },
 ];
-
-/** Which answer key a screen collects (for "answered" counts + demo bots). */
-export function screenKeys(screen: Screen): QuestionKey[] {
-  switch (screen.type) {
-    case "question":
-      return [screen.q.key];
-    case "double":
-      return [screen.qs[0].key, screen.qs[1].key];
-    case "math":
-      return ["math"];
-    default:
-      return [];
-  }
-}
 
 export function isRevealable(screen: Screen) {
   return screen.type === "question" || screen.type === "double";

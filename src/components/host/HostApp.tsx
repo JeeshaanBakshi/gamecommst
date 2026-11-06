@@ -2,7 +2,6 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { useDemoBots } from "@/hooks/useDemoBots";
 import { useHostGame } from "@/hooks/useHostGame";
 import { burst } from "@/lib/confetti";
 import { serverNow } from "@/lib/clock";
@@ -13,18 +12,13 @@ import { Stage } from "./Stage";
 import { TopBar } from "./TopBar";
 import { FinaleScreen } from "./screens/FinaleScreen";
 import { LobbyScreen } from "./screens/LobbyScreen";
-import { MathScreen } from "./screens/MathScreen";
 import { QuestionScreen } from "./screens/QuestionScreen";
-import { StressResultsScreen } from "./screens/StressResultsScreen";
 import { StudyScrollScreen } from "./screens/StudyScrollScreen";
 import { TalkScreen } from "./screens/TalkScreen";
 
 export function HostApp() {
-  const game = useHostGame({ onJoin: () => sfx.join(), onAnswer: () => sfx.pop() });
-  const { room, state, players, answers, status, error, actions, backend } = game;
+  const { room, state, players, answers, status, error, actions, backend } = useHostGame({ onJoin: () => sfx.join(), onAnswer: () => sfx.pop() });
   const [muted, setMuted] = useState(sfx.muted);
-  const [demo, setDemo] = useState(false);
-  useDemoBots(game, demo);
 
   const toggleMute = () => {
     sfx.setMuted(!sfx.muted);
@@ -33,7 +27,6 @@ export function HostApp() {
 
   const confirmReset = () => {
     if (window.confirm("Reset the room? This removes every player and answer and sends phones back to the join screen.")) {
-      setDemo(false);
       void actions.reset();
     }
   };
@@ -55,7 +48,6 @@ export function HostApp() {
       } else if (k === "r") actions.reveal();
       else if (k === "l") actions.toggleLock();
       else if (k === "m") toggleMute();
-      else if (k === "d") setDemo((d) => !d);
       else if (k === "f") {
         if (document.fullscreenElement) void document.exitFullscreen();
         else void document.documentElement.requestFullscreen?.().catch(() => {});
@@ -113,12 +105,11 @@ export function HostApp() {
   const screen = SCREENS[state.screen] ?? SCREENS[0];
   const base = (process.env.NEXT_PUBLIC_SITE_URL || window.location.origin).replace(/\/$/, "");
   const joinUrl = `${base}/play?room=${room.code}`;
-  const dark = screen.type === "talk" && !!screen.alert;
 
   return (
     <>
-      <Stage dark={dark}>
-        {screen.type !== "lobby" && <TopBar screen={screen} code={room.code} playerCount={players.length} status={status} dark={dark} />}
+      <Stage>
+        {screen.type !== "lobby" && <TopBar screen={screen} code={room.code} playerCount={players.length} status={status} />}
         <AnimatePresence mode="wait">
           <motion.div
             key={screen.id}
@@ -135,27 +126,18 @@ export function HostApp() {
       <HostControls
         state={state}
         muted={muted}
-        demo={demo}
-        fakeCount={players.filter((p) => p.is_fake).length}
         onPrev={actions.prev}
         onNext={actions.next}
         onReveal={actions.reveal}
         onLock={actions.toggleLock}
         onMute={toggleMute}
-        onDemo={() => setDemo((d) => !d)}
-        onSeed={() => {
-          void actions.seedFakes();
-          setDemo(true);
-        }}
         onReset={confirmReset}
-        onNewRoom={actions.newRoom}
         onJump={actions.goTo}
       />
     </>
   );
 
   function renderScreen(s: Screen) {
-    const common = { answers, playerCount: players.length };
     switch (s.type) {
       case "lobby":
         return <LobbyScreen code={room!.code} joinUrl={joinUrl} players={players} onKick={(id) => void actions.kick(id)} localMode={backend.mode === "local"} />;
@@ -164,11 +146,7 @@ export function HostApp() {
       case "question":
         return <QuestionScreen q={s.q} answers={answers} players={players} revealed={state!.revealed} locked={state!.locked} startedAt={state!.started_at} />;
       case "double":
-        return <StudyScrollScreen {...common} revealed={state!.revealed} locked={state!.locked} />;
-      case "math":
-        return <MathScreen startedAt={state!.started_at} players={players} answers={answers} />;
-      case "stressResults":
-        return <StressResultsScreen players={players} answers={answers} />;
+        return <StudyScrollScreen answers={answers} playerCount={players.length} revealed={state!.revealed} locked={state!.locked} />;
       case "finale":
         return <FinaleScreen startedAt={state!.started_at} players={players} answers={answers} />;
     }

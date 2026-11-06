@@ -9,8 +9,6 @@ export interface SlideDef {
   title: string;
   bullets: string[];
   emoji: string;
-  /** Dark caution-tape styling (used to set up the stress test). */
-  alert?: boolean;
 }
 
 export interface TalkDef {
@@ -117,13 +115,12 @@ export const TALKS = {
         ],
       },
       {
-        title: "STRESS TEST",
-        emoji: "🚨",
-        alert: true,
+        title: "How to manage it",
+        emoji: "🗓️",
         bullets: [
-          "Under pressure, adrenaline kicks in and your heart rate jumps",
-          "30 seconds of mental math. 5 questions. No calculators.",
-          "Let's see how you handle the pressure. Live.",
+          "Plan the week on Sunday. Big deadlines first",
+          "Study in focused blocks: 25 min on, 5 min break",
+          "Phone in another room while you study",
         ],
       },
     ],

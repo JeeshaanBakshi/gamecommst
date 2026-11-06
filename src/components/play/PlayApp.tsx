@@ -8,7 +8,6 @@ import { SCREENS, type Screen } from "@/lib/flow";
 import type { AnswerValue, QuestionKey } from "@/lib/types";
 import { ChoiceList, ChoiceQuestion, SliderQuestion, Status } from "./Answering";
 import { EnterCode, JoinForm } from "./JoinScreens";
-import { MathTask } from "./MathTask";
 import { QuizQuestion } from "./QuizQuestion";
 import { ResultCard } from "./ResultCard";
 import { Prompt, Shell } from "./Shell";
@@ -20,7 +19,6 @@ export function PlayApp() {
   const { phase, room, state, player, mine, status, notice, backend } = g;
   const answer = g.answer;
   const save = useCallback((k: QuestionKey, v: AnswerValue) => void answer(k, v), [answer]);
-  const saveMath = useCallback((v: AnswerValue) => save("math", v), [save]);
 
   if (phase === "loading") {
     return (
@@ -86,18 +84,6 @@ export function PlayApp() {
               <Status answered={mine[a.key] != null && mine[b.key] != null} locked={locked} revealed={revealed} />
             </div>
           </div>
-        );
-      }
-      case "math":
-        return <MathTask key={`${s.id}-${state!.started_at ?? "wait"}`} seed={room!.code} emoji={player!.emoji} startedAt={state!.started_at} saved={mine.math} onProgress={saveMath} />;
-      case "stressResults": {
-        const m = mine.math;
-        return (
-          <Waiting
-            emoji={player!.emoji}
-            title={m ? `You got ${m.correct ?? 0}/5` : "Results on the big screen!"}
-            sub={m ? (m.correct === 5 ? "Perfect score. Your hairline thanks you 🧠" : "Eyes up for the leaderboard 👀") : undefined}
-          />
         );
       }
       case "finale":
