@@ -17,6 +17,7 @@ import { LobbyScreen } from "./screens/LobbyScreen";
 import { QuestionScreen } from "./screens/QuestionScreen";
 import { StudyScrollScreen } from "./screens/StudyScrollScreen";
 import { TalkScreen } from "./screens/TalkScreen";
+import { timelineSteps } from "./TimelineSlide";
 
 export function HostApp() {
   const { room, state, players, answers, status, error, actions, backend } = useHostGame({ onJoin: () => sfx.join(), onAnswer: () => sfx.pop() });
@@ -34,6 +35,24 @@ export function HostApp() {
     }
   };
 
+  /* click-by-click reveals inside a slide (the timeline): → reveals the next item before moving on */
+  const [inSlide, setInSlide] = useState<{ id: string; n: number }>({ id: "", n: 0 });
+  const onScreen = state ? SCREENS[state.screen] : null;
+  const onScreenId = onScreen?.id ?? "";
+  const slideSteps = onScreen?.type === "talk" && onScreen.timeline ? timelineSteps(onScreen.timeline) : 0;
+  const slideStep = inSlide.id === onScreenId ? inSlide.n : 0;
+  const advance = () => {
+    if (slideStep < slideSteps) {
+      setInSlide({ id: onScreenId, n: slideStep + 1 });
+      if (slideStep + 1 === slideSteps) sfx.ding();
+      else sfx.pop();
+    } else actions.next();
+  };
+  const back = () => {
+    if (slideStep > 0) setInSlide({ id: onScreenId, n: slideStep - 1 });
+    else actions.prev();
+  };
+
   /* keyboard + clicker */
   const keyRef = useRef<(e: KeyboardEvent) => void>(() => {});
   useEffect(() => {
@@ -44,10 +63,10 @@ export function HostApp() {
       const k = e.key.toLowerCase();
       if (["arrowright", " ", "pagedown", "enter"].includes(k)) {
         e.preventDefault();
-        actions.next();
+        advance();
       } else if (["arrowleft", "pageup", "backspace"].includes(k)) {
         e.preventDefault();
-        actions.prev();
+        back();
       } else if (k === "r") actions.reveal();
       else if (k === "l") actions.toggleLock();
       else if (k === "m") toggleMute();
@@ -142,8 +161,8 @@ export function HostApp() {
       <HostControls
         state={state}
         muted={muted}
-        onPrev={actions.prev}
-        onNext={actions.next}
+        onPrev={back}
+        onNext={advance}
         onReveal={actions.reveal}
         onLock={actions.toggleLock}
         onMute={toggleMute}
@@ -160,7 +179,7 @@ export function HostApp() {
       case "lobby":
         return <LobbyScreen code={room!.code} joinUrl={joinUrl} players={players} onKick={(id) => void actions.kick(id)} localMode={backend.mode === "local"} />;
       case "talk":
-        return <TalkScreen s={s} corner={<JoinBadge url={joinUrl} code={room!.code} />} />;
+        return <TalkScreen s={s} step={slideStep} corner={<JoinBadge url={joinUrl} code={room!.code} />} />;
       case "question":
         return <QuestionScreen q={s.q} answers={answers} players={players} revealed={state!.revealed} locked={state!.locked} startedAt={state!.started_at} />;
       case "double":

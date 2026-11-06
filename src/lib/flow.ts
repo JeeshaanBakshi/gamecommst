@@ -1,4 +1,4 @@
-import { SPEAKER_PHOTOS, TALKS, type TalkDef } from "./slides";
+import { SPEAKER_PHOTOS, TALKS, type SlideDef, type TalkDef } from "./slides";
 import type { QuestionKey } from "./types";
 
 /** Quizzes auto-reveal after this long (or as soon as everyone has answered). */
@@ -137,20 +137,20 @@ export const Q = {
     correct: 2,
     explain: "400 mg, about three cups of brewed coffee. Two big coffees and an energy drink gets you there fast.",
   },
-  quiz_cortisol: {
-    key: "quiz_cortisol",
+  quiz_gap: {
+    key: "quiz_gap",
     kind: "choice",
-    prompt: "Which hormone is called the \"stress hormone\"?",
+    prompt: "How much time did Jeeshaan have between the MATH 137 quiz and the CS 135 midterm?",
     short: "Quiz",
     options: [
-      { label: "Cortisol", emoji: "😰" },
-      { label: "Melatonin", emoji: "😴" },
-      { label: "Insulin", emoji: "🍩" },
-      { label: "Dopamine", emoji: "🎉" },
+      { label: "2 hours", emoji: "😌" },
+      { label: "1 hour", emoji: "🙂" },
+      { label: "40 minutes", emoji: "😵" },
+      { label: "What gap?", emoji: "💀" },
     ],
     bad: [],
-    correct: 0,
-    explain: "Cortisol. Keep it high for weeks (hello, midterm season) and your hair growth cycle suffers.",
+    correct: 2,
+    explain: "40 minutes. That's not a break, that's a pit stop.",
   },
   quiz_genetics: {
     key: "quiz_genetics",
@@ -187,6 +187,9 @@ export type Screen =
       shower?: boolean;
       /** Picture shown instead of the emoji. */
       image?: string;
+      bigWord?: SlideDef["bigWord"];
+      timeline?: SlideDef["timeline"];
+      chain?: SlideDef["chain"];
       /** Speaker's photo for the phones. */
       photo?: string;
       part: number;
@@ -210,6 +213,9 @@ function talk(t: TalkDef, id: string): Screen[] {
     wall: "wall" in s ? s.wall : undefined,
     shower: "shower" in s ? s.shower : undefined,
     image: "image" in s ? s.image : undefined,
+    bigWord: "bigWord" in s ? s.bigWord : undefined,
+    timeline: "timeline" in s ? s.timeline : undefined,
+    chain: "chain" in s ? s.chain : undefined,
     photo: SPEAKER_PHOTOS[t.speaker],
     part: i + 1,
     of: t.slides.length,
@@ -234,11 +240,10 @@ export const SCREENS: Screen[] = [
   ask(TALKS.eating, Q.meals),
   ask(TALKS.eating, Q.quiz_caffeine),
 
-  // Jeeshaan's section follows his speech: 2 slides → cortisol quiz → doomscroll poll → the fix.
-  ...talk(TALKS.courseload, "s4").slice(0, 2),
-  ask(TALKS.courseload, Q.quiz_cortisol),
+  // Jeeshaan's section follows his speech: TIME → timeline → chain → the fix → gap quiz → study vs scroll.
+  ...talk(TALKS.courseload, "s4"),
+  ask(TALKS.courseload, Q.quiz_gap),
   { type: "double", id: "q-study-scroll", section: TALKS.courseload.section, qs: [Q.study, Q.scroll] },
-  ...talk(TALKS.courseload, "s4").slice(2),
 
   ...talk(TALKS.bald, "s5"),
   ask(TALKS.bald, Q.family),

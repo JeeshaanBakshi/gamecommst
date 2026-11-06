@@ -15,6 +15,18 @@ export interface SlideDef {
   wall?: boolean;
   /** Emmanuel's "SH***WER" slide: WATERLOO crossed out in a stink cloud. */
   shower?: boolean;
+  /** One giant word on its own (same style as the shower slide). */
+  bigWord?: string;
+  /** Day timeline revealed one item per click; `gap` adds the red bracket as the last click. */
+  timeline?: { events: TimelineEvent[]; gap?: { after: number; label: string; detail: string } };
+  /** Cause → effect chain drawn left to right. The last box gets a balding head. */
+  chain?: string[];
+}
+
+export interface TimelineEvent {
+  time: string;
+  label: string;
+  emoji: string;
 }
 
 /**
@@ -168,31 +180,33 @@ export const TALKS = {
     topic: "managing courseload",
     speaker: "Jeeshaan",
     slides: [
+      { title: "TIME", emoji: "⏰", bullets: [], bigWord: "TIME" },
       {
-        title: "My \u201cperfect\u201d day",
+        title: "One real day.",
         emoji: "📅",
-        bullets: [
-          "📽️ A presentation (hi, it's this one)",
-          "📝 A quiz",
-          "💀 And a midterm right after, for flavour",
-        ],
+        bullets: [],
+        timeline: {
+          events: [
+            { time: "9:00 AM", label: "Presentation", emoji: "📽️" },
+            { time: "5:30 – 6:20 PM", label: "MATH 137 Quiz", emoji: "📝" },
+            { time: "7:00 PM", label: "CS 135 Midterm", emoji: "💀" },
+          ],
+          gap: { after: 1, label: "40 min", detail: "6:20 → 7:00" },
+        },
       },
       {
-        title: "Stress that never clocks out",
-        emoji: "⏰",
-        bullets: [
-          "5 courses + co-op apps + clubs + the group chat that only says \u201csounds good\u201d",
-          "One stressful day: your body handles it. Every week: cortisol stays high for weeks",
-          "Same cortisol Austin and Jacob warned you about. Now it's on your hairline's schedule",
-        ],
+        title: "The Waterloo Effect, live.",
+        emoji: "📚",
+        bullets: [],
+        chain: ["📚 Stacked deadlines", "😰 Stress", "🥱 Less sleep", "Hair loss"],
       },
       {
-        title: "Plan it. Block it. Banish it.",
-        emoji: "🍅",
+        title: "The Fix",
+        emoji: "🛠️",
         bullets: [
-          "Plan the week on Sunday. 10 minutes now saves a 3am panic on Thursday",
-          "25 minutes on, 5 off: the Pomodoro technique (named after a tomato timer 🍅)",
-          "Phone in another room. Even face-down on your desk, it drags your focus",
+          "📅 Sunday 15 — plan the week",
+          "⏱️ Use the gaps — review, don't learn new",
+          "📵 Phone away — not face-down",
         ],
       },
     ],

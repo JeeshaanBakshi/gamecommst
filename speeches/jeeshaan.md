@@ -1,90 +1,67 @@
 # Managing Courseload: Jeeshaan
 
-About 3 minutes of talking, plus about 1 minute for the quiz and the poll.
-`[→]` = press the clicker or the right arrow.
+`(click)` = press → / the clicker. On the timeline slide each click reveals the next item.
 
 ---
 
-## Slide 1: My "perfect" day
+## [TIME]
 
-**Attention getter**
+Thanks, Jacob.
+So Austin took your sleep. Jacob took your lunch.
+I'm here for the last thing you've got left: your time.
 
-"Thanks, Jacob. So Austin took your sleep, and Jacob took your lunch and swapped it for three energy drinks. I'm here for whatever you've got left: your time.
+## [SLIDE 1: One real day]
 
-Let me show you my *perfect* day.
+Let me show you one real day of my life. Actually… it's today.
 
-A presentation. Hi, it's this one.
-A quiz.
-And then, just for flavour, a midterm right after.
+(click) 9 AM: this presentation. Hi, guys.
+(click) 5:30: MATH 137 quiz. Okay. Still fine.
+(click) 7 PM: CS 135 midterm.
+(click) And between them? Forty minutes.
 
-That's not a schedule. That's a hostage situation."
+*(pause)*
 
-**Audience motivation**
+That's not a break. That's a pit stop.
+That's not a schedule. That's a hostage situation.
+No wonder Jacob's talking about energy drinks. Today's a two-Monster day.
 
-"And it's not just me. Everyone in this room is juggling way too much. If you can manage your courseload, you're not just saving your GPA. You're saving your follicles."
+## [SLIDE 2: The Waterloo Effect, live]
 
-**Preview**
+And this is the Waterloo Effect, live. Gurshaan showed you the WatCard glow-down. This is where it happens.
+Not in one bad night. In days like this, stacked back to back.
+Deadlines pile up → stress goes up → sleep goes down → and as Austin told you, your hair starts packing its bags.
+You can't stop Waterloo from stacking your days. But you can control what you do in between.
 
-"So I'll cover why your courseload is quietly stressing you out 24/7, where all your time actually goes, and three tricks to get it back."
+## [SLIDE 3: The Fix]
 
-`[→]`
+Fix one: the Sunday 15. Fifteen minutes every Sunday. Write every deadline, assignment, quiz, and midterm on one calendar. If I'd seen tonight's midterm on Sunday, it couldn't jump-scare me today.
 
-## Slide 2: Stress that never clocks out
+Fix two: use the gaps.
+We have 40 minutes between our MATH quiz and our CS midterm. Instead of learning anything new, we should review.
+→ Pick a few solved recursion questions and ask "why?" at every step. Why this base case? Why does it call itself here?
+→ If every "why" clicks, move on. If one doesn't, that's where you spend your time.
+It's called self-explanation, and it's one of the most effective ways to study, in any gap, not just before exams.
 
-"Five courses. Co-op applications. Clubs. And that one group chat where somebody only ever replies 'sounds good.'
+Fix three: phone away. Not face-down. Not on silent. Away. Face-down isn't away; it's just your phone hiding.
 
-Here's the problem. Your body is actually fine with a little stress. One quiz, a quick hit of adrenaline, done, you recover. But when it's every single week, your stress never clocks out. Cortisol stays high for weeks, not hours.
+Three habits. All free. No supplements, no hair transplant, no money needed.
+Now, let's see who was actually listening… and who was doomscrolling.
 
-And you've now heard the word *cortisol* from Austin, from Jacob, and from me. So let's see who's actually been listening."
-
-`[→]`
-
-## QUIZ: Which hormone is called the "stress hormone"?
-
-"Phones out. You've got 20 seconds. If you get this one wrong, I'm telling Austin."
+## [QUIZ 1: the 40-minute gap]
 
 *(It reveals by itself when time runs out or everyone has answered.)*
 
-**After the reveal:** "Most of you got it: cortisol. And to the people who picked dopamine... I respect the optimism."
+(after reveal) Forty minutes. If you got that wrong, you were probably on your phone. Which brings us to…
 
-`[→]`
+## [QUIZ 2: Study vs Scroll]
 
-## POLL: Study vs Doomscroll
+*(Wait for most phones, then click to reveal.)*
 
-"Okay, next one. Be honest. Nobody's checking. Actually, I am checking. How many hours a day do you study, and how many hours do you doomscroll?"
+If scroll ≥ study: So we're not bad at time management. We're just very committed. To TikTok.
+If study > scroll: Okay, you study more than you scroll. Either you're lying, or you're the reason the curve exists.
 
-*(Wait for most phones to answer, then press `[→]` to reveal.)*
+## [Close]
 
-**If SCROLLING WINS:** "So scrolling won. We are, officially, a TikTok university that does some calculus on the side."
-
-**If STUDYING WINS:** "Studying wins. So either you're all very disciplined, or very good liars. I've seen your screen time. I know which one it is."
-
-"And here's why it matters. Research from UC Irvine found it takes about 23 minutes to get fully back on track after an interruption. So that 'quick' check of Instagram? It isn't 30 seconds. It's 23 minutes of your midterm prep. Gone."
-
-`[→]`
-
-## Slide 3: Plan it. Block it. Banish it.
-
-"So how do we fix this? Three things.
-
-**One: plan it.** Plan your week on Sunday, biggest deadlines first. Ten minutes on Sunday saves you a 3am panic on Thursday.
-
-**Two: block it.** Study in blocks: 25 minutes on, 5 minutes off. It's called the Pomodoro technique, named after a tomato-shaped kitchen timer. So yes, a tomato has better time management than most of us.
-
-**Three: banish it.** Put your phone in another room. A study from UT Austin found that just having your phone on your desk, even face-down and on silent, made people do worse on tests. People whose phones were in another room did best. That's free IQ points, no tutoring required."
-
-**Conclusion and hand-off**
-
-"So: plan it, block it, banish it. Your GPA goes up, your cortisol goes down, and your hairline stays right where your parents left it.
-
-And speaking of what your parents left you... here's Emmanuel, to tell you how to actually keep a full head of hair."
-
-`[→]` *(goes to Emmanuel's SH\*\*\*WER slide)*
-
----
-
-### Notes
-
-- **Jacob's last line in the doc hands off to Emmanuel.** Since you go between them, Jacob should say: *"Now Jeeshaan's going to show you where all your time goes."*
-- **Facts used:** UC Irvine (Gloria Mark): about 23 minutes to get back on task after an interruption. UT Austin "Brain Drain" study (Ward et al., 2017): a phone on the desk, even face-down and silent, lowers performance; a phone in another room is best. Pomodoro: Francesco Cirillo, named after his tomato-shaped kitchen timer.
-- **The doomscroll stat:** your one-liner depends on which side wins, so glance at the big stamp on the screen before you speak.
+So Waterloo will keep giving us days like today.
+But stress works like a tip: the longer you wait, the more you pay. And here, you pay in hair.
+For those of us already paying… Emmanuel's here with damage control.
