@@ -24,7 +24,7 @@ export interface SlideDef {
 export const SPEAKER_PHOTOS: Record<string, string | undefined> = {
   Gurshaan: "/bald/watcard-gurshaan.jpg",
   Austin: "/bald/watcard-austin.jpg",
-  Jacob: undefined,
+  Jacob: "/bald/watcard-jacob.jpg",
   Jeeshaan: "/bald/watcard-jeeshaan.jpg",
   Emmanuel: "/bald/watcard-emmanuel.jpg",
 };
